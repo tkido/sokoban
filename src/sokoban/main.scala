@@ -6,6 +6,9 @@ object main extends App {
   import com.tkido.tools.Text
 
   Log.level = Config.logLevel
-
+  
+  val (width, arr) = Parser("data/level/simple/map1")
+  Log.d(arr.toList)
+  
   Log.close()
 }
