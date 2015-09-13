@@ -11,14 +11,14 @@ object main extends App {
   Log.d(naked.toList)
   
   
-  val pullcounts = PullCounter(naked)
-  Log.d(pullcounts)
+  val pullCounts = PullCounter(naked)
+  Log.d(pullCounts)
   
   val printer = Printer(width)
   Log.d(printer(naked))
   
-  Log.d(BONG)
-  Log.d(writeMap(0))
-  
+  AvoidSetter(naked, pullCounts)
+  Log.d(printer(naked))
+
   Log.close()
 }
