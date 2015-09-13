@@ -10,5 +10,11 @@ object main extends App {
   val (width, arr) = Parser("data/level/simple/map1")
   Log.d(arr.toList)
   
+  val printer = Printer(width)
+  Log.d(printer(arr))
+  
+  Log.d(BONG)
+  Log.d(writeMap(0))
+  
   Log.close()
 }

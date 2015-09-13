@@ -11,9 +11,9 @@ package object sokoban {
   val EXTRA = 32
   val BLANK = 64
   
-  val MONG  =  MAN & GOAL
-  val MONA  =  MAN & AVOID
-  val BONG  =  BAG & GOAL
+  val MONG = MAN | GOAL
+  val MONA = MAN | AVOID
+  val BONG = BAG | GOAL
   
   val readMap = Map(
     ' ' -> FLOOR,
