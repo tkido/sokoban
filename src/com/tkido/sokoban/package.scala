@@ -3,7 +3,7 @@ package object sokoban{
   val FLOOR =  0
   val GOAL  =  1
   val MAN   =  2
-  val AVOID  = 4
+  val AVOID =  4
   val BAG   =  8
   val WALL  = 16
   val EXTRA = 32

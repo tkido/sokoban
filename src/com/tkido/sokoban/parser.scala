@@ -16,7 +16,7 @@ object Parser{
     '#' -> WALL)
   
   def apply(path:String) :ProblemInitialData = {
-    Log i s"read:${path}"
+    Log i s"read: ${path}"
     val rawLines = Text.readLines(path)
     
     val lines =
@@ -54,6 +54,8 @@ object Parser{
     
     val naked = arr.map(_ & ~(MAN | BAG))
     
+    val neumann = List(-width, -1, 1, width)
+    
     new ProblemInitialData(
       width,
       height,
@@ -61,6 +63,7 @@ object Parser{
       mans.head,
       bags,
       goals,
-      naked)
+      naked,
+      neumann)
   }
 }

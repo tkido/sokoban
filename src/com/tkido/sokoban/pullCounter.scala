@@ -4,10 +4,11 @@ import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
 object PullCounter{
-  def apply(naked:Array[Int]) :List[Array[Int]] = {
-    val dec = DeadEndChecker(naked)
+  def apply(data:ProblemInitialData) :List[Array[Int]] = {
+    val dec = DeadEndChecker(data)
+    val naked = data.naked
     def getPullCount(goal:Int): Array[Int] = {
-      val pullcount = Array.fill(naked.size)(Int.MaxValue)
+      val pullcount = Array.fill(data.limit)(Int.MaxValue)
       def check(v:Int, distance:Int):Unit = {
         pullcount(v) = distance
         for (d <- NEUMANN)

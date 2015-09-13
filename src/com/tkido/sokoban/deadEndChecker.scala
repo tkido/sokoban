@@ -1,8 +1,11 @@
 package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 
-class DeadEndChecker(naked:Array[Int]) {
+class DeadEndChecker(data:ProblemInitialData) {
   def getHomeSize(man:Int, bags:BitSet) :Int = {
+    val naked = data.naked
+    val NEUMANN = data.neumann
+    
     val checked = BitSet()
     def check(v:Int){
       checked += v
@@ -22,6 +25,6 @@ class DeadEndChecker(naked:Array[Int]) {
     isDeadEnd(man, BitSet(bag))
 }
 object DeadEndChecker{
-  def apply(naked:Array[Int]) =
-    new DeadEndChecker(naked)
+  def apply(data:ProblemInitialData) =
+    new DeadEndChecker(data)
 }

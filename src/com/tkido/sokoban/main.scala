@@ -10,7 +10,7 @@ object main extends App {
   val initData = Parser("data/level/simple/map1")
   Log.d(initData.naked.toList)
   
-  val pullCounts = PullCounter(initData.naked)
+  val pullCounts = PullCounter(initData)
   Log.d(pullCounts)
   
   val printer = Printer(initData.width)

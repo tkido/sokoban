@@ -8,5 +8,6 @@ case class ProblemInitialData(
     initMan:Int,
     initBags:BitSet,
     goals:BitSet,
-    naked:Array[Int]){
+    naked:Array[Int],
+    neumann:List[Int]){
 }
