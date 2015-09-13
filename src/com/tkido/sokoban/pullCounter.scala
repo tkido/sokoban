@@ -3,11 +3,9 @@ package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
-class PullCounter(naked:Array[Int]) {
-  private val dec = DeadEndChecker(naked)
-  val pullcounts = makePullCounts(naked)
-  
-  private def makePullCounts(naked:Array[Int]) :List[Array[Int]] = {
+object PullCounter{
+  def apply(naked:Array[Int]) :List[Array[Int]] = {
+    val dec = DeadEndChecker(naked)
     def getPullCount(goal:Int): Array[Int] = {
       val pullcount = Array.fill(naked.size)(Int.MaxValue)
       def check(v:Int, distance:Int):Unit = {
@@ -23,17 +21,11 @@ class PullCounter(naked:Array[Int]) {
       Log i s"PullCounter pullcount:${pullcount.toList}"
       pullcount
     }
-    
     val goals = BitSet()
-    
     naked.zipWithIndex.foreach{case(n, i) =>
        if((n & GOAL) == GOAL) goals += i
     }
     goals.toList.map(getPullCount)
+    
   }
-}
-
-
-object PullCounter {
-  def apply(naked:Array[Int]) = new PullCounter(naked)
 }

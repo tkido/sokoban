@@ -11,7 +11,7 @@ object main extends App {
   Log.d(naked.toList)
   
   
-  val pullcounts = PullCounter(naked).pullcounts
+  val pullcounts = PullCounter(naked)
   Log.d(pullcounts)
   
   val printer = Printer(width)
