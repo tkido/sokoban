@@ -1,4 +1,4 @@
-package sokoban
+package com.tkido.sokoban
 
 object main extends App {
   import com.tkido.sokoban.Config
