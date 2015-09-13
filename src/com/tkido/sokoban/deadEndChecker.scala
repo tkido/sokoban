@@ -9,7 +9,7 @@ class DeadEndChecker(width:Int, naked:Array[Int]) {
     def check(v:Int){
       checked += v
       for (d <- NEUMANN)
-        if (!checked(v+d) && naked.canMan(v+d) && !bags(v+d))
+        if (!checked(v+d) && (naked(v+d) < 5) && !bags(v+d))
           check(v+d)
     }
     check(man)
