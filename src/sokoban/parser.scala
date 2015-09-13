@@ -10,9 +10,9 @@ object Parser{
     ' ' -> FLOOR,
     '.' -> GOAL,
     '@' -> MAN,
-    '+' -> MONG,
+    '+' -> (MAN | GOAL),
     '$' -> BAG,
-    '*' -> BONG,
+    '*' -> (BAG | GOAL),
     '#' -> WALL)
   
   def apply(path:String) = {
