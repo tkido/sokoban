@@ -31,7 +31,7 @@ object Parser{
     val limit = width * height
     Log.d(width, height, limit)
     
-    NEUMANN = List(-width, -1, 1, width)
+    setWidth(width)
     
     val arr =
       lines.map(_.map(readMap(_)))
@@ -56,6 +56,6 @@ object Parser{
     Log i mans
     Log i bags
     Log i goals
-    (width, arr)
+    (width, naked)
   }
 }

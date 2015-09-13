@@ -26,6 +26,12 @@ package object sokoban{
     EXTRA -> '△',
     BLANK -> '　')
   
-  var NEUMANN = List[Int]()
+  def NEUMANN = varNEUMANN
+  
+  private var varNEUMANN = List[Int]()
+  def setWidth(width:Int){
+    varNEUMANN = List(-width, -1, 1, width)
+  }
+  
   
 }

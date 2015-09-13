@@ -1,9 +1,7 @@
 package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 
-class DeadEndChecker(width:Int, naked:Array[Int]) {
-  //val NEUMANN = List(-width, -1, 1, width)
-  
+class DeadEndChecker(naked:Array[Int]) {
   def getHomeSize(man:Int, bags:BitSet) :Int = {
     val checked = BitSet()
     def check(v:Int){
@@ -24,6 +22,6 @@ class DeadEndChecker(width:Int, naked:Array[Int]) {
     isDeadEnd(man, BitSet(bag))
 }
 object DeadEndChecker{
-  def apply(width:Int, naked:Array[Int]) =
-    new DeadEndChecker(width, naked)
+  def apply(naked:Array[Int]) =
+    new DeadEndChecker(naked)
 }

@@ -7,11 +7,15 @@ object main extends App {
 
   Log.level = Config.logLevel
   
-  val (width, arr) = Parser("data/level/simple/map1")
-  Log.d(arr.toList)
+  val (width, naked) = Parser("data/level/simple/map1")
+  Log.d(naked.toList)
+  
+  
+  val pullcounts = PullCounter(naked).pullcounts
+  Log.d(pullcounts)
   
   val printer = Printer(width)
-  Log.d(printer(arr))
+  Log.d(printer(naked))
   
   Log.d(BONG)
   Log.d(writeMap(0))
