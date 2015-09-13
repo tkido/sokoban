@@ -1,5 +1,5 @@
 package com.tkido
-package object sokoban {
+package object sokoban{
   val FLOOR =  0
   val GOAL  =  1
   val MAN   =  2
@@ -25,4 +25,7 @@ package object sokoban {
     WALL  -> '■',
     EXTRA -> '△',
     BLANK -> '　')
+  
+  var NEUMANN = List[Int]()
+  
 }

@@ -31,6 +31,8 @@ object Parser{
     val limit = width * height
     Log.d(width, height, limit)
     
+    NEUMANN = List(-width, -1, 1, width)
+    
     val arr =
       lines.map(_.map(readMap(_)))
         .flatten.toArray
@@ -44,6 +46,11 @@ object Parser{
        if((n & BAG) == BAG) bags += i
        if((n & GOAL) == GOAL) goals += i
     }
+    
+    assert(mans.size == 1)
+    assert(goals.size > 0)
+    assert(bags.size > 0)
+    assert(bags.size == goals.size)
     
     val naked = arr.map(_ & ~(MAN | BAG))
     Log i mans
