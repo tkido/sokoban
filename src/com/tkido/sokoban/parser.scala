@@ -15,7 +15,7 @@ object Parser{
     '*' -> (BAG | GOAL),
     '#' -> WALL)
   
-  def apply(path:String) = {
+  def apply(path:String) :ProblemInitialData = {
     Log i s"read:${path}"
     val rawLines = Text.readLines(path)
     
@@ -53,9 +53,14 @@ object Parser{
     assert(bags.size == goals.size)
     
     val naked = arr.map(_ & ~(MAN | BAG))
-    Log i mans
-    Log i bags
-    Log i goals
-    (width, naked)
+    
+    new ProblemInitialData(
+      width,
+      height,
+      limit,
+      mans.head,
+      bags,
+      goals,
+      naked)
   }
 }

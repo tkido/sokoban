@@ -7,18 +7,17 @@ object main extends App {
 
   Log.level = Config.logLevel
   
-  val (width, naked) = Parser("data/level/simple/map1")
-  Log.d(naked.toList)
+  val initData = Parser("data/level/simple/map1")
+  Log.d(initData.naked.toList)
   
-  
-  val pullCounts = PullCounter(naked)
+  val pullCounts = PullCounter(initData.naked)
   Log.d(pullCounts)
   
-  val printer = Printer(width)
-  Log.d(printer(naked))
+  val printer = Printer(initData.width)
+  Log.d(printer(initData.naked))
   
-  AvoidSetter(naked, pullCounts)
-  Log.d(printer(naked))
+  AvoidSetter(initData.naked, pullCounts)
+  Log.d(printer(initData.naked))
 
   Log.close()
 }

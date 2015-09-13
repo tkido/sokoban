@@ -1,5 +1,4 @@
 package com.tkido.sokoban
-
 import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
