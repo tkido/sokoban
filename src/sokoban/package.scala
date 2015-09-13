@@ -1,7 +1,5 @@
 package com.tkido
 package object sokoban {
-  var w = 0
-  
   val FLOOR =  0
   val GOAL  =  1
   val MAN   =  2
@@ -14,15 +12,6 @@ package object sokoban {
   val MONG = MAN | GOAL
   val MONA = MAN | AVOID
   val BONG = BAG | GOAL
-  
-  val readMap = Map(
-    ' ' -> FLOOR,
-    '.' -> GOAL,
-    '@' -> MAN,
-    '+' -> MONG,
-    '$' -> BAG,
-    '*' -> BONG,
-    '#' -> WALL)
 
   val writeMap = Map(
     FLOOR -> '　',
@@ -36,18 +25,4 @@ package object sokoban {
     WALL  -> '■',
     EXTRA -> '△',
     BLANK -> '　')
-  /*
-  val writeMap = Map(
-    FLOOR -> ' ',
-    GOAL  -> '.',
-    MAN   -> '@',
-    MONG  -> '+',
-    AVOID -> 'x',
-    MONA  -> '@',
-    BAG   -> '$',
-    BONG  -> '*',
-    WALL  -> '#',
-    EXTRA -> ' ',
-    BLANK -> ' ')
-  */
 }
