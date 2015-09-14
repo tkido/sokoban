@@ -2,7 +2,7 @@ package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 import scala.collection.mutable.Stack
 
-case class ProblemData(
+case class Data(
     width:Int,
     height:Int,
     limit:Int,

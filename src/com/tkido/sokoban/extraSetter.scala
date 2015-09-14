@@ -4,7 +4,7 @@ import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
 object ExtraSetter {
-  def apply(data:ProblemData) {
+  def apply(data:Data) {
     def check(v:Int){
       if(data.goals(v))
         return

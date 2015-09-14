@@ -2,7 +2,7 @@ package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
-class LockChecker(data:ProblemData) {
+class LockChecker(data:Data) {
   import scala.collection.mutable.{Set => MSet}
   
   //Rotation Map: It rotates vector 90 degrees counterclockwise.
@@ -40,5 +40,5 @@ class LockChecker(data:ProblemData) {
 
 
 object LockChecker{
-  def apply(data:ProblemData) = new LockChecker(data)
+  def apply(data:Data) = new LockChecker(data)
 }

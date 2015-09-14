@@ -1,7 +1,7 @@
 package com.tkido.sokoban
 import scala.collection.mutable.ArrayBuffer
 
-class Printer(data:ProblemData) {
+class Printer(data:Data) {
   private val writeMap = Map(
     FLOOR -> '　',
     GOAL  -> '・',
@@ -18,7 +18,7 @@ class Printer(data:ProblemData) {
   val width = data.width
   val limit = data.limit
   
-  def apply(data:ProblemData) :String = {
+  def apply(data:Data) :String = {
     val buf = new StringBuilder
     var i = 0
     while(i < limit){
@@ -37,6 +37,6 @@ class Printer(data:ProblemData) {
 }
 
 object Printer {
-  def apply(data:ProblemData) =
+  def apply(data:Data) =
     new Printer(data)
 }
