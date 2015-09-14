@@ -7,7 +7,7 @@ object main extends App {
 
   Log.level = Config.logLevel
   
-  val initData = Parser("data/level/simple/map1")
+  val initData = Parser(args.head)
   Log.d(initData.naked.toList)
   
   val pullCounts = PullCounter(initData)

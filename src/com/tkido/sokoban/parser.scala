@@ -31,9 +31,10 @@ object Parser{
     val limit = width * height
     Log.d(width, height, limit)
     
-    val arr =
-      lines.map(_.map(readMap(_)))
-        .flatten.toArray
+    val arr = lines
+                .map(_.map(readMap(_)))
+                .map{line => line ++ List.fill(width - line.size)(FLOOR)}
+                .flatten.toArray
     
     val mans = BitSet()
     val bags = BitSet()
