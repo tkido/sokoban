@@ -12,14 +12,10 @@ object BlankSetter {
       done
     }
     val checked = check(data.man, BitSet())
-    
     (data.canMans &~ checked).foreach{
       data.naked(_) = WALL
     }
     data.canMans &= checked
     data.canBags &= checked
-    
-    Log i data.canMans
-    Log i data.canBags
   }
 }

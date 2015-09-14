@@ -10,9 +10,7 @@ object AvoidSetter {
           arr(i) != Int.MaxValue
         }
       }
-    Log i data.canBags
-    avoids.foreach(data.naked(_) |= AVOID)
+    avoids.foreach{data.naked(_) |= AVOID}
     data.canBags &~= avoids
-    Log i data.canBags
   }
 }
