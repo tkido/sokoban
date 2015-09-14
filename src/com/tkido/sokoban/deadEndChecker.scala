@@ -1,17 +1,16 @@
 package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 
-class DeadEndChecker(data:ProblemInitialData) {
+class DeadEndChecker(data:ProblemData) {
   def getHomeSize(man:Int, bags:BitSet) :Int = {
-    val checked = BitSet()
-    def check(v:Int){
-      checked += v
+    def check(v:Int, done:BitSet) :BitSet = {
+      done += v
       for (d <- data.neumann)
-        if (!checked(v+d) && (data.naked(v+d) < 5) && !bags(v+d))
-          check(v+d)
+        if (!done(v+d) && data.canMans(v+d) && !bags(v+d))
+          check(v+d,done)
+      done
     }
-    check(man)
-    checked.size
+    check(man, BitSet()).size
   }
   def isDeadEnd(man:Int, bags:BitSet) :Boolean =
     getHomeSize(man, bags) < 5
@@ -22,6 +21,6 @@ class DeadEndChecker(data:ProblemInitialData) {
     isDeadEnd(man, BitSet(bag))
 }
 object DeadEndChecker{
-  def apply(data:ProblemInitialData) =
+  def apply(data:ProblemData) =
     new DeadEndChecker(data)
 }

@@ -15,7 +15,7 @@ object Parser{
     '*' -> (BAG | GOAL),
     '#' -> WALL)
   
-  def apply(path:String) :ProblemInitialData = {
+  def apply(path:String) :ProblemData = {
     Log i s"read: ${path}"
     val rawLines = Text.readLines(path)
     
@@ -48,7 +48,7 @@ object Parser{
        if((n & GOAL) == GOAL) goals += i
        if(n != WALL){
          canMans += i
-         canBags += 1
+         canBags += i
        }
     }
     assert(mans.size == 1)
@@ -60,7 +60,7 @@ object Parser{
     
     val neumann = List(-width, -1, 1, width)
     
-    new ProblemInitialData(
+    new ProblemData(
       width,
       height,
       limit,

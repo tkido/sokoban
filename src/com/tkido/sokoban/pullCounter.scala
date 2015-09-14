@@ -4,7 +4,7 @@ import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
 object PullCounter{
-  def apply(data:ProblemInitialData) :List[Array[Int]] = {
+  def apply(data:ProblemData) :Iterable[Array[Int]] = {
     val dec = DeadEndChecker(data)
     def getPullCount(goal:Int): Array[Int] = {
       val pullcount = Array.fill(data.limit)(Int.MaxValue)
@@ -21,7 +21,7 @@ object PullCounter{
       Log i s"PullCounter pullcount:${pullcount.toList}"
       pullcount
     }
-    data.goals.toList.map(getPullCount)
+    data.goals.map(getPullCount)
     
   }
 }

@@ -3,18 +3,18 @@ import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
 object AvoidSetter {
-  def apply(board:Array[Int], pullCounts:List[Array[Int]]) {
-    def setAvoidByPull(board:Array[Int]) {
+  def apply(data:ProblemData, pullCounts:Iterable[Array[Int]]) {
+    def setAvoidByPull{
       val avoids =
-        Range(0, board.size).filter{i =>
+        data.canBags.filter{i =>
           !pullCounts.exists{arr =>
             arr(i) != Int.MaxValue
           }
-        }.toList
-      avoids.foreach{case avoid =>
-        if(board(avoid) < WALL)
-          board(avoid) |= AVOID
-      }
+        }
+      Log i data.canBags
+      avoids.foreach(data.naked(_) |= AVOID)
+      data.canBags &~= avoids
+      Log i data.canBags
     }
     /*
     def setAvoidByPush(board:Array[Int]) {
@@ -39,7 +39,7 @@ object AvoidSetter {
           board(v) |= AVOID
     }
     */
-    setAvoidByPull(board)
+    setAvoidByPull
     //setAvoidByPush(board)
   }
 

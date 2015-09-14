@@ -1,8 +1,9 @@
 package com.tkido.sokoban
 import scala.collection.mutable.BitSet
+import com.tkido.tools.Log
 
 object BlankSetter {
-  def apply(data:ProblemInitialData) {
+  def apply(data:ProblemData) {
     def check(v:Int, done:BitSet) :BitSet = {
       done += v
       for (d <- data.neumann)
@@ -15,8 +16,10 @@ object BlankSetter {
     (data.canMans &~ checked).foreach{
       data.naked(_) = WALL
     }
-    
     data.canMans &= checked
     data.canBags &= checked
+    
+    Log i data.canMans
+    Log i data.canBags
   }
 }

@@ -17,7 +17,7 @@ object main extends App {
   
   Log.d(printer(data.naked))
   
-  AvoidSetter(data.naked, pullCounts)
+  AvoidSetter(data, pullCounts)
   Log.d(printer(data.naked))
 
   Log.close()
