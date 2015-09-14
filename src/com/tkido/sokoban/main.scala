@@ -27,7 +27,19 @@ object main extends App {
   Log.d(printer(data))
   
   val evaluator = Evaluator(data, pullCounts)
-  //Log d evaluator.gradient.toList
+  
+  val ider = Identifier(data)
+  val id = ider.getId(data.man, data.bags)
+  Log d s"ID: ${id}"
+  
+  val (man, bags) = ider.fromId(id)
+  Log d s"man: ${man}, bags: ${bags}"
+  
+  data.man = man
+  data.bags.clear
+  data.bags |= bags
+  Log.d(printer(data))
+  
   
   Log.close()
 }

@@ -13,9 +13,9 @@ class Evaluator(data:ProblemData, counts:Iterable[Array[Int]]) {
       case LARGEINT => 0
       case c => scala.math.pow(c.toDouble, 1.2).toInt
     })
-    val powedCountsum = powedCounts
+    val powedCountSum = powedCounts
       .fold(Array.fill(data.limit)(0))((a1, a2) => (a1 zip a2).map(p => p._1 + p._2))
-    val gradient = powedCountsum.map{
+    val gradient = powedCountSum.map{
       case 0 => 0
       case c => LARGEINT / c
     }
