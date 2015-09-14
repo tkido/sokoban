@@ -12,22 +12,7 @@ package object sokoban{
   val MONG = MAN | GOAL
   val MONA = MAN | AVOID
   val BONG = BAG | GOAL
-
-  val writeMap = Map(
-    FLOOR -> '　',
-    GOAL  -> '・',
-    MAN   -> '足',
-    MONG  -> '足', //距
-    AVOID -> '×',
-    MONA  -> '足',
-    BAG   -> '田',
-    BONG  -> '回',
-    WALL  -> '■',
-    EXTRA -> '△',
-    BLANK -> '　')
   
   val LARGEINT = 99999999
   val INITNODE = -1
-  
-  
 }

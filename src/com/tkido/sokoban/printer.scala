@@ -2,6 +2,19 @@ package com.tkido.sokoban
 import scala.collection.mutable.ArrayBuffer
 
 class Printer(data:ProblemData) {
+  private val writeMap = Map(
+    FLOOR -> '　',
+    GOAL  -> '・',
+    MAN   -> '足',
+    MONG  -> '足', //距
+    AVOID -> '×',
+    MONA  -> '足',
+    BAG   -> '田',
+    BONG  -> '回',
+    WALL  -> '■',
+    EXTRA -> '△',
+    BLANK -> '　')
+  
   val width = data.width
   val limit = data.limit
   
