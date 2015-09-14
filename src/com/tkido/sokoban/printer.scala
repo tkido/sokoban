@@ -9,11 +9,11 @@ class Printer(data:ProblemData) {
     val buf = new StringBuilder
     var i = 0
     while(i < limit){
-      val x = i match{
-        case n if(n == data.man) => data.naked(i) | MAN
-        case n if(data.bags(i)) => data.naked(i) | BAG
-        case _ => data.naked(i)
-      }
+      var x = data.naked(i)
+      if(data.bags(i))
+        x |= BAG
+      else if(i == data.man)
+        x |= MAN
       buf += writeMap(x)
       i += 1
       if ((i % width) == 0)

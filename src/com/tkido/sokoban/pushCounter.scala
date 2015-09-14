@@ -15,7 +15,7 @@ object PushCounter{
             check(v+d, distance+1, counts)
         counts
       }
-      check(goal, 0, Array.fill(data.limit)(Int.MaxValue))
+      check(goal, 0, Array.fill(data.limit)(LARGEINT))
     }
     data.bags.map(getPushCounts)
   }

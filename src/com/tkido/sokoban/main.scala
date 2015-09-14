@@ -25,6 +25,9 @@ object main extends App {
   val pushCounts = PushCounter(data)
   AvoidSetter(data, pushCounts)  
   Log.d(printer(data))
-
+  
+  val evaluator = Evaluator(data, pullCounts)
+  //Log d evaluator.gradient.toList
+  
   Log.close()
 }

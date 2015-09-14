@@ -7,7 +7,7 @@ object AvoidSetter {
     val avoids =
       data.canBags.filter{i =>
         !counts.exists{arr =>
-          arr(i) != Int.MaxValue
+          arr(i) != LARGEINT
         }
       }
     avoids.foreach{data.naked(_) |= AVOID}

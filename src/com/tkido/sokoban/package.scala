@@ -1,5 +1,7 @@
 package com.tkido
 package object sokoban{
+  val LARGEINT = 99999999
+  
   val FLOOR =  0
   val GOAL  =  1
   val MAN   =  2
