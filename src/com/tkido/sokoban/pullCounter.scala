@@ -10,7 +10,7 @@ object PullCounter{
       val pullcount = Array.fill(data.limit)(Int.MaxValue)
       def check(v:Int, distance:Int){
         pullcount(v) = distance
-        for (d <- NEUMANN)
+        for (d <- data.neumann)
           if (data.naked(v+d) < WALL &&
               data.naked(v+d*2) < WALL &&
               distance+1 < pullcount(v+d) &&

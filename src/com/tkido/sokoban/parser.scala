@@ -31,8 +31,6 @@ object Parser{
     val limit = width * height
     Log.d(width, height, limit)
     
-    setWidth(width)
-    
     val arr =
       lines.map(_.map(readMap(_)))
         .flatten.toArray
