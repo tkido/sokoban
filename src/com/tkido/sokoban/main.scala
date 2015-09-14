@@ -1,4 +1,5 @@
 package com.tkido.sokoban
+import scala.collection.mutable.BitSet
 
 object main extends App {
   import com.tkido.sokoban.Config
@@ -38,8 +39,10 @@ object main extends App {
   data.man = man
   data.bags.clear
   data.bags |= bags
-  Log.d(printer(data))
+  Log d printer(data)
   
+  val lockChecker = LockChecker(data)
+  Log d lockChecker(BitSet(12, 21), 21, -data.width)
   
   Log.close()
 }
