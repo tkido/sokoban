@@ -14,10 +14,10 @@ object main extends App {
   
   val pullCounts = PullCounter(data)
   Log.d(pullCounts)
-  
-  Log.d(printer(data.naked))
-  
   AvoidSetter(data, pullCounts)
+  Log.d(printer(data.naked))
+  val pushCounts = PushCounter(data)
+  AvoidSetter(data, pushCounts)  
   Log.d(printer(data.naked))
 
   Log.close()
