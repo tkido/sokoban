@@ -1,4 +1,5 @@
 package com.tkido.sokoban
+import scala.collection.mutable.ArrayBuffer
 
 class Printer(data:ProblemData) {
   val width = data.width
@@ -9,8 +10,8 @@ class Printer(data:ProblemData) {
     var i = 0
     while(i < limit){
       val x = i match{
-        case data.man => data.naked(i) | MAN
-        case n if data.bags(i) => data.naked(i) | BAG
+        case n if(n == data.man) => data.naked(i) | MAN
+        case n if(data.bags(i)) => data.naked(i) | BAG
         case _ => data.naked(i)
       }
       buf += writeMap(x)

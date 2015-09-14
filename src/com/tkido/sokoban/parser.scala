@@ -1,7 +1,7 @@
 package com.tkido.sokoban
 
 import scala.collection.mutable.BitSet
-
+import scala.collection.mutable.Stack
 import com.tkido.tools.Log
 import com.tkido.tools.Text
   
@@ -59,6 +59,7 @@ object Parser{
     val naked = arr.map(_ & ~(MAN | BAG))
     
     val neumann = List(-width, -1, 1, width)
+    val steps = Stack[Int]()
     
     new ProblemData(
       width,
@@ -70,6 +71,7 @@ object Parser{
       canMans,
       canBags,
       naked,
-      neumann)
+      neumann,
+      steps)
   }
 }
