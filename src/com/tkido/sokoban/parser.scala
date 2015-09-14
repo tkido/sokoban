@@ -33,19 +33,24 @@ object Parser{
     
     val arr = lines
                 .map(_.map(readMap(_)))
-                .map{line => line ++ List.fill(width - line.size)(FLOOR)}
+                .map{line => line ++ List.fill(width - line.size)(WALL)}
                 .flatten.toArray
     
     val mans = BitSet()
     val bags = BitSet()
     val goals = BitSet()
+    val canMans = BitSet()
+    val canBags = BitSet()
     
     arr.zipWithIndex.foreach{case(n, i) =>
        if((n & MAN) == MAN) mans += i
        if((n & BAG) == BAG) bags += i
        if((n & GOAL) == GOAL) goals += i
+       if(n != WALL){
+         canMans += i
+         canBags += 1
+       }
     }
-    
     assert(mans.size == 1)
     assert(goals.size > 0)
     assert(bags.size > 0)
@@ -62,6 +67,8 @@ object Parser{
       mans.head,
       bags,
       goals,
+      canMans,
+      canBags,
       naked,
       neumann)
   }

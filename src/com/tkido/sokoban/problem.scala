@@ -5,9 +5,11 @@ case class ProblemInitialData(
     width:Int,
     height:Int,
     limit:Int,
-    initMan:Int,
-    initBags:BitSet,
+    man:Int,
+    bags:BitSet,
     goals:BitSet,
+    canMans:BitSet,
+    canBags:BitSet,
     naked:Array[Int],
     neumann:List[Int]){
 }
