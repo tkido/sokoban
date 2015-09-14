@@ -1,12 +1,19 @@
 package com.tkido.sokoban
 
-class Printer(width:Int) {
-  def apply(arr:Array[Int]) :String = {
+class Printer(data:ProblemData) {
+  val width = data.width
+  val limit = data.limit
+  
+  def apply(data:ProblemData) :String = {
     val buf = new StringBuilder
-    val limit = arr.size
     var i = 0
     while(i < limit){
-      buf += writeMap(arr(i))
+      val x = i match{
+        case data.man => data.naked(i) | MAN
+        case n if data.bags(i) => data.naked(i) | BAG
+        case _ => data.naked(i)
+      }
+      buf += writeMap(x)
       i += 1
       if ((i % width) == 0)
         buf += '\n'
@@ -16,6 +23,6 @@ class Printer(width:Int) {
 }
 
 object Printer {
-  def apply(width:Int) =
-    new Printer(width:Int)
+  def apply(data:ProblemData) =
+    new Printer(data)
 }

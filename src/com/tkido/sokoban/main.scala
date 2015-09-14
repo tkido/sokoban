@@ -8,17 +8,17 @@ object main extends App {
   Log.level = Config.logLevel
   
   val data = Parser(args.head)
-  val printer = Printer(data.width)
-  Log.d(printer(data.naked))
+  val printer = Printer(data)
+  Log.d(printer(data))
   BlankSetter(data)
   
   val pullCounts = PullCounter(data)
   Log.d(pullCounts)
   AvoidSetter(data, pullCounts)
-  Log.d(printer(data.naked))
+  Log.d(printer(data))
   val pushCounts = PushCounter(data)
   AvoidSetter(data, pushCounts)  
-  Log.d(printer(data.naked))
+  Log.d(printer(data))
 
   Log.close()
 }
