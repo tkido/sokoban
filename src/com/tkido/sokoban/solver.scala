@@ -73,7 +73,9 @@ class Solver(data:Data) {
     }
     
     val op = loop() match{
-      case None => None
+      case None =>
+        for(id <- bin) nodes(id).status = Node.DEAD
+        None
       case Some(node) =>
         if(depth == 1)
           return Some(node) //Clear!!
@@ -84,7 +86,9 @@ class Solver(data:Data) {
             else node :: addAncestors(nodes(node.parent.get))
           val list = addAncestors(node)
           for(node <- list) node.status = Node.LIVE
-          for(id <- bin) nodes(id).status = Node.UNKNOWN
+          for(id <- bin)
+            if(nodes(id).status == Node.CHECKED)
+              nodes(id).status = Node.UNKNOWN
           Some(node)
         }
     }
@@ -124,27 +128,17 @@ class Solver(data:Data) {
     if(!isOpen && node.parent.isDefined){
       val lastBags = ider.fromId(node.parent.get)._2
       val lastHand = Tuple2((lastBags &~ bags).head, (bags &~ lastBags).head)
-      Log d s"lastHand: ${lastHand}"
       def isClosed(v:Int, d:Int) :Boolean = {
-        Log d s"isClosed: v = ${v}, d = ${d}"
         val aims = List(v+d, v+r(d), v-r(d), v+d+r(d), v+d-r(d))
-        Log d s"aims: ${aims}"
         for(aim <- aims){
           val newBags = BitSet()
           def check(v:Int){
-            Log d s"check: v = ${v}"
             checked += v
-            for(d <- moore if(bags(v+d))){
-              Log d s"added: v+d = ${v+d}"
-              newBags += v+d
-            }
+            for(d <- moore if(bags(v+d))) newBags += v+d
             for(d <- neumann if(!checked(v+d) && canMans(v+d) && !bags(v+d))) check(v+d)
           }
           if(!checked(aim) && canMans(aim) && !bags(aim)){
             check(aim)
-            Log d s"aim: ${aim}"
-            Log d s"checked: ${checked}"
-            Log d s"newBags: ${newBags}"
             if(newBags.size < bags.size){
               val newId = ider.toId(lastHand._1, newBags)
               val newNode = Node(newId, None, 0, evaluator(newBags), true, Node.UNKNOWN)
@@ -159,7 +153,7 @@ class Solver(data:Data) {
                 nodes(newId).status match{
                   case Node.DEAD    => return true
                   case Node.LIVE    => ()
-                  case Node.CHECKED => ()
+                  case Node.CHECKED => sys.error("MUST NOT HAPPEN!!")
                   case Node.UNKNOWN => solve(newNode) match{
                                          case None => return true
                                          case Some(node) => () //SubProblem Clear
@@ -180,7 +174,10 @@ class Solver(data:Data) {
     
     Log d s"Hands: ${hands}"
     hands.foreach{hand =>
-      pushBag(hand._1, hand._2)
+      pushBag(hand._1, hand._2) match{
+        case None => ()
+        case Some(node) => return Some(node)
+      }
     }
     def pushBag(from:Int, to:Int) :Option[Node] = {
       val newBags = bags - from + to
@@ -196,10 +193,10 @@ class Solver(data:Data) {
         }else{
           nodes(newId).status match{
             case Node.DEAD    => return None
-            case Node.LIVE    => return Some(nodes(newId))
+            case Node.LIVE    => return Some(node)
             case Node.CHECKED => return None
             case Node.UNKNOWN => {
-              //stack.push(newId)
+              stack.push(newId)
               //stack = stack.sortBy(-nodes(_).value)
             }
           }
