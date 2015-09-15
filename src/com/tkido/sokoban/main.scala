@@ -27,22 +27,7 @@ object main extends App {
   AvoidSetter(data, pushCounts)  
   Log.d(printer(data))
   
-  val evaluator = Evaluator(data, pullCounts)
-  
-  val ider = Identifier(data)
-  val id = ider.getId(data.man, data.bags)
-  Log d s"ID: ${id}"
-  
-  val (man, bags) = ider.fromId(id)
-  Log d s"man: ${man}, bags: ${bags}"
-  
-  data.man = man
-  data.bags.clear
-  data.bags |= bags
-  Log d printer(data)
-  
-  val lockChecker = LockChecker(data)
-  Log d lockChecker(BitSet(12, 21), 21, -data.width)
+  val solver = Solver(data, pullCounts)
   
   Log.close()
 }

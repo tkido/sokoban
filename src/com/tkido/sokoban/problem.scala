@@ -22,6 +22,7 @@ case class Node(
     parent:Option[BigInt],
     count:Int,
     value:Int,
+    sub:Boolean,
     var status:Int){
   
 }

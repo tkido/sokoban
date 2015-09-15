@@ -23,7 +23,7 @@ class Evaluator(data:Data, counts:Iterable[Array[Int]]) {
       if(gradient(v) == 0 && data.goals(v))
         gradient(v) = LARGEINT*2
     }
-    Log d s"Evaluator gradient:${gradient.toList}"
+    //Log d s"Evaluator gradient:${gradient.toList}"
     gradient
   }
 }
