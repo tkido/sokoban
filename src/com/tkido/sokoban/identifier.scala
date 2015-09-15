@@ -4,23 +4,23 @@ import scala.collection.mutable.{Map => MMap}
 import com.tkido.tools.Log
 
 class Identifier(data:Data) {
-  val fMap = MMap[Int, Int]()
-  val rMap = MMap[BigInt, Int]()
+  private val fMap = MMap[Int, Int]()
+  private val rMap = MMap[BigInt, Int]()
   
-  val bagNum = data.bags.size
-  val initBags = data.bags.clone
-  val initMan = getHome(data.man, initBags)
-  val minHome = data.canBags.min
+  private val bagNum = data.bags.size
+  private val initBags = data.bags.clone
+  private val initMan = getHome(data.man, initBags)
+  private val minHome = data.canBags.min
   
-  val spaceNum = data.canBags.sum
-  var space = spaceNum
+  private val spaceNum = data.canBags.sum
+  private var space = spaceNum
   data.canBags.foreach{v =>
     space -= 1
     fMap(v) = space
     rMap(BigInt(space)) = v
   }
  
-  val pascal = Array.fill[BigInt](bagNum+1, spaceNum)(1)
+  private val pascal = Array.fill[BigInt](bagNum+1, spaceNum)(1)
   for(n <- Range(1, bagNum+1))
     for(m <- Range(1, spaceNum))
       pascal(n)(m) = pascal(n)(m-1) + pascal(n-1)(m-1)
@@ -32,10 +32,8 @@ class Identifier(data:Data) {
     var hash = BigInt(0)
     for((bag, i) <- bags.zipWithIndex)
       hash += pascal(bagNum-i)(fMap(bag))
-    hash = hash * spaceNum + fMap(home)
-    hash
+    hash * spaceNum + fMap(home)
   }
-  
   
   private def getHome(man:Int, bags:BitSet) :Int = {
     class GlobalExitException extends RuntimeException
