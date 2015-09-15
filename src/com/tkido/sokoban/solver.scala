@@ -5,10 +5,10 @@ import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
 import com.tkido.tools.Log
 
-class Solver(data:Data, pullCounts:Iterable[Array[Int]]) {
+class Solver(data:Data) {
   val ider = Identifier(data)
   val lockChecker = LockChecker(data)
-  val evaluator = Evaluator(data, pullCounts)
+  val evaluator = Evaluator(data, data.pullCounts)
   val printer = Printer(data)
 
   val initId = ider.toId(data.man, data.bags)
@@ -27,9 +27,13 @@ class Solver(data:Data, pullCounts:Iterable[Array[Int]]) {
   var bin = Stack[BigInt]()
   val bins = Stack[Stack[BigInt]]()
   
+  Log f printer(initNode)
   solve(initNode) match{
     case None => Log f "Impossible!!"
-    case Some(node) => Log f "Cleared!!"
+    case Some(node) => {
+      Log f "Cleared!!"
+      Log f printer(node)
+    }
   }
   
   private def solve(intNode:Node) :Option[Node] = {
@@ -42,6 +46,7 @@ class Solver(data:Data, pullCounts:Iterable[Array[Int]]) {
     stack.push(node.id)
     val depth = stacks.size
     var count = 0
+    
     def loop() :Option[Node] = {
       while(stack.nonEmpty){
         total += 1
@@ -58,6 +63,7 @@ class Solver(data:Data, pullCounts:Iterable[Array[Int]]) {
       }
       None
     }
+    
     loop() match{
       case None => None
       case Some(node) => return Some(node)
@@ -121,6 +127,6 @@ class Solver(data:Data, pullCounts:Iterable[Array[Int]]) {
 }
 
 object Solver {
-  def apply(problem:Data, pullCounts:Iterable[Array[Int]]) =
-    new Solver(problem, pullCounts)
+  def apply(problem:Data) =
+    new Solver(problem)
 }

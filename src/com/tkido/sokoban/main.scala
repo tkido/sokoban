@@ -1,5 +1,4 @@
 package com.tkido.sokoban
-import scala.collection.mutable.BitSet
 
 object main extends App {
   import com.tkido.sokoban.Config
@@ -9,7 +8,7 @@ object main extends App {
   Log.level = Config.logLevel
   
   val data = Parser(args.head)
-  val solver = Solver(data, data.pullCounts)
+  val solver = Solver(data)
   
   Log.close()
 }
