@@ -56,6 +56,7 @@ object Parser{
     assert(bags.size > 0)
     assert(bags.size == goals.size)
     
+    val man = mans.head
     val naked = arr.map(_ & ~(MAN | BAG))
     
     val neumann = List(-width, -1, 1, width)
@@ -65,7 +66,8 @@ object Parser{
       width,
       height,
       limit,
-      mans.head,
+      man,
+      man,
       bags,
       goals,
       canMans,

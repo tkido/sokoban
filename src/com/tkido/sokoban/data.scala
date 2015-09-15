@@ -7,6 +7,7 @@ class Data(
     val width:Int,
     val height:Int,
     val limit:Int,
+    val initMan:Int,
     var man:Int,
     val bags:BitSet,
     val goals:BitSet,
@@ -70,7 +71,7 @@ class Data(
   /**
    * Home is the size of FLOORs that MAN can move on without pushing bags
    */
-  private def getHomeSize(man:Int, bags:BitSet) :Int = {
+  private def getHomes(man:Int, bags:BitSet) :BitSet = {
     def check(v:Int, done:BitSet) :BitSet = {
       done += v
       for (d <- neumann)
@@ -78,12 +79,14 @@ class Data(
           check(v+d,done)
       done
     }
-    check(man, BitSet()).size
+    check(man, BitSet())
   }
-  private def isDeadEnd(man:Int, bags:BitSet) :Boolean =
-    getHomeSize(man, bags) < 5
-  private def getHomeSize(man:Int, bag:Int) :Int =
-    getHomeSize(man, BitSet(bag))
+  private def isDeadEnd(man:Int, bags:BitSet) :Boolean = {
+    val homes = getHomes(man, bags)
+    homes.size < 5 && !homes(initMan)
+  }
+  private def getHomes(man:Int, bag:Int) :BitSet =
+    getHomes(man, BitSet(bag))
   private def isDeadEnd(man:Int, bag:Int) :Boolean =
     isDeadEnd(man, BitSet(bag))
   
