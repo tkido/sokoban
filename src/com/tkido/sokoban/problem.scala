@@ -19,6 +19,9 @@ case class Data(
   setBlank
   setExtra
   
+  /**
+   * Set WALLs to unreachable FLOORs.
+   */
   private def setBlank() {
     def check(v:Int, checked:BitSet) :BitSet = {
       checked += v
@@ -33,6 +36,11 @@ case class Data(
     canBags &= checked
   }
   
+  /**
+   * Set EXTRA to useless FLOORs.
+   * EXTRA is the same as WALL other than appearance.
+   * Now "useless" means dead end widthout GOAL.
+   */
   private def setExtra() {
     def check(v:Int){
       if(goals(v))
