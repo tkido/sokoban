@@ -3,8 +3,6 @@ import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
 class LockChecker(data:Data) {
-  import scala.collection.mutable.{Set => MSet}
-  
   //Rotation Map: It rotates vector 90 degrees counterclockwise.
   private val width = data.width
   private val r =

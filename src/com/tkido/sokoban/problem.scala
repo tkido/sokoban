@@ -19,6 +19,11 @@ case class Data(
   setBlank()
   setExtra()
   
+  val pullCounts = countPull()
+  setAvoid(pullCounts)
+  val pushCounts = countPush()
+  setAvoid(pushCounts)
+  
   /**
    * Set WALLs to unreachable FLOORs.
    */
@@ -48,21 +53,93 @@ case class Data(
       if(neumann.map(d => if(canMans(v+d)) 0 else 1).sum == 3){
         canMans -= v
         canBags -= v
-        Log i v
         naked(v) = EXTRA
         val d = neumann.collectFirst{case d if canMans(v+d) => d}.get
         if(v == man){
           steps.push(d)
           man += d
-          if(bags(v+d)){
-            bags - (v+d)
-            bags + (v+d*2)
-          }
+          if(bags(v+d))
+            bags -= (v+d) += (v+d*2)
         }
         check(v+d)
       }
     }
     canMans.foreach{check(_)}
   }
+  
+  /**
+   * Home is the size of FLOORs that MAN can move on without pushing bags
+   */
+  private def getHomeSize(man:Int, bags:BitSet) :Int = {
+    def check(v:Int, done:BitSet) :BitSet = {
+      done += v
+      for (d <- neumann)
+        if (!done(v+d) && canMans(v+d) && !bags(v+d))
+          check(v+d,done)
+      done
+    }
+    check(man, BitSet()).size
+  }
+  private def isDeadEnd(man:Int, bags:BitSet) :Boolean =
+    getHomeSize(man, bags) < 5
+  private def getHomeSize(man:Int, bag:Int) :Int =
+    getHomeSize(man, BitSet(bag))
+  private def isDeadEnd(man:Int, bag:Int) :Boolean =
+    isDeadEnd(man, BitSet(bag))
+  
+  /**
+   * Pull a imaginary BAG from each GOAL with counting distance
+   */
+  def countPull() :Iterable[Array[Int]] = {
+    def getPullCounts(goal:Int): Array[Int] = {
+      def check(v:Int, distance:Int, counts:Array[Int]) :Array[Int] = {
+        counts(v) = distance
+        for (d <- neumann)
+          if (canMans(v+d) &&
+              canMans(v+d*2) &&
+              distance+1 < counts(v+d) &&
+              !isDeadEnd(v+d*2, v+d) )
+            check(v+d, distance+1, counts)
+        counts
+      }
+      check(goal, 0, Array.fill(limit)(LARGEINT))
+    }
+    goals.map(getPullCounts)
+  }
+  
+  /**
+   * Push a imaginary BAG from each GOAL with counting distance
+   */
+  private def countPush() :Iterable[Array[Int]] = {
+    def getPushCounts(goal:Int): Array[Int] = {
+      def check(v:Int, distance:Int, counts:Array[Int]) :Array[Int] = {
+        counts(v) = distance
+        for (d <- neumann)
+          if (canMans(v-d) &&
+              canBags(v+d) &&
+              distance+1 < counts(v+d))
+            check(v+d, distance+1, counts)
+        counts
+      }
+      check(goal, 0, Array.fill(limit)(LARGEINT))
+    }
+    bags.map(getPushCounts)
+  }
+  
+  /**
+   * Set AVOIDs to FLOORs that BAG cannot be.
+   */
+  private def setAvoid(counts:Iterable[Array[Int]]){
+    val avoids =
+      canBags.filter{i =>
+        !counts.exists{arr =>
+          arr(i) != LARGEINT
+        }
+      }
+    avoids.foreach{naked(_) |= AVOID}
+    canBags &~= avoids
+  }
+  
+
   
 }
