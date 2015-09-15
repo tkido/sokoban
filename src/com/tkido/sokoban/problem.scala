@@ -3,18 +3,18 @@ import scala.collection.mutable.BitSet
 import scala.collection.mutable.Stack
 import com.tkido.tools.Log
 
-case class Data(
-    width:Int,
-    height:Int,
-    limit:Int,
+class Data(
+    val width:Int,
+    val height:Int,
+    val limit:Int,
     var man:Int,
-    bags:BitSet,
-    goals:BitSet,
-    canMans:BitSet,
-    canBags:BitSet,
-    naked:Array[Int],
-    neumann:List[Int],
-    steps:Stack[Int]){
+    val bags:BitSet,
+    val goals:BitSet,
+    val canMans:BitSet,
+    val canBags:BitSet,
+    val naked:Array[Int],
+    val neumann:List[Int],
+    val steps:Stack[Int]){
   
   setBlank()
   setExtra()

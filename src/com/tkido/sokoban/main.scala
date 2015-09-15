@@ -9,9 +9,6 @@ object main extends App {
   Log.level = Config.logLevel
   
   val data = Parser(args.head)
-  val printer = Printer(data)
-  Log.d(printer(data))
-
   val solver = Solver(data, data.pullCounts)
   
   Log.close()
