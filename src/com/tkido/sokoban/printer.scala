@@ -28,7 +28,7 @@ class Printer(data:Data) {
       var x = naked(i)
       if(bags(i))
         x |= BAG
-      else if(i == data.man)
+      else if(i == man)
         x |= MAN
       buf += writeMap(x)
       i += 1
@@ -44,7 +44,7 @@ class Printer(data:Data) {
     apply(man, bags)
   }
   def apply(node:Node) :String = {
-    s"ID:${node.id} parent:${node.parent} count:${node.count} value:${node.value} status:${node.status}\n" +
+    s"ID:${node.id} parent:${node.parent}\ncount:${node.count} value:${node.value} status:${node.status}\n" +
     apply(node.id)
   }
 }

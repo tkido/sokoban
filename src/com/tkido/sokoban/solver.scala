@@ -46,7 +46,7 @@ class Solver(data:Data, pullCounts:Iterable[Array[Int]]) {
       while(stack.nonEmpty){
         total += 1
         count += 1
-        Log i s"(${depth}:${count}/${total})th evaluation"
+        Log i s"(${count}/${total}:${depth})th evaluation"
         var id = stack.pop()
         bin.push(id)
         node = nodes(id)
@@ -95,6 +95,7 @@ class Solver(data:Data, pullCounts:Iterable[Array[Int]]) {
     if(isOpen && node.sub)
       return Some(node)
     */
+    Log d hands
     hands.foreach{hand =>
       pushBag(hand._1, hand._2)
     }
@@ -118,7 +119,6 @@ class Solver(data:Data, pullCounts:Iterable[Array[Int]]) {
     None
   }
 }
-
 
 object Solver {
   def apply(problem:Data, pullCounts:Iterable[Array[Int]]) =
