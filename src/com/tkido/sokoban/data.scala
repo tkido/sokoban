@@ -130,7 +130,7 @@ class Data(
   }
   
   /**
-   * Set AVOIDs to FLOORs that BAG cannot be.
+   * Set AVOIDs to FLOORs on that BAG cannot be.
    */
   private def setAvoid(counts:Iterable[Array[Int]]){
     val avoids =

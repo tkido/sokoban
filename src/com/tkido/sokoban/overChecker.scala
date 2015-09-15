@@ -7,44 +7,45 @@ class OverChecker(data:Data) {
   val bagsSize = data.bags.size
   val naked = data.naked
   
-  val pullables = data.pullCounts.map(_.map(c => if(c < LARGEINT) 1 else 0))
-  val pullableSum = pullables
-    .fold(Array.fill(data.limit)(0))((a1, a2) => (a1 zip a2).map(p => p._1 + p._2))
-  Log d s"OverChecker pullableSum:${pullableSum.toList}"
+  val pullables = data.pullCounts.map(_.map{
+    case LARGEINT => 0
+    case _ => 1
+  })
+  val limits = pullables
+    .fold(Array.fill(data.limit)(0))((a1, a2) => (a1 zip a2).map(p => p._1 + p._2))  
+  val limitMap = MMap[Int, Int]()
+  val areaMap = MMap[Int, BitSet]()
   
-  val limits = MMap[Int, Int]()
-  val cpMap = MMap[Int, BitSet]()
-  
-  pullableSum.zipWithIndex.foreach{case(c, v) =>
-    if(0 < c && c < bagsSize){
-      val checkPoints = makeCheckPoints(c, v)
-      if(c < checkPoints.size){
-        limits(v) = c
-        cpMap(v) = checkPoints
-        Log d s"limit: ${c}\ncheckPoints: ${checkPoints}"
+  data.canBags.foreach{v =>
+    val limit = limits(v)
+    if(0 < limit && limit < bagsSize){
+      val checkArea = makeCheckArea(limit, v)
+      if(limit < checkArea.size){
+        limitMap(v) = limit
+        areaMap(v) = checkArea
       }
     }
   }
-  Log i s"limits: ${limits}\ncpMap: ${cpMap}"
+  Log i s"limitMap: ${limitMap}\nareaMap: ${areaMap}"
   
-  private def makeCheckPoints(limit:Int, point:Int) :BitSet = {
+  private def makeCheckArea(limit:Int, v:Int) :BitSet = {
     def check(v:Int, checked:BitSet) :BitSet = {
       checked += v
       for (d <- data.neumann)
         if (!checked(v+d) &&
-            pullableSum(v+d) <= limit &&
+            limits(v+d) <= limit &&
             data.canMans(v-d) &&
             data.canBags(v+d) &&
             !data.isDeadEnd(v+d, v) )
           check(v+d, checked)
       checked
     }
-    check(point, BitSet())
+    check(v, BitSet())
   }
   
   def apply(v:Int, bags:BitSet) :Boolean = {
-    if(limits.contains(v))
-      limits(v) < (cpMap(v) & bags).size
+    if(limitMap.contains(v))
+      limitMap(v) < (areaMap(v) & bags).size
     else
       false
   }
