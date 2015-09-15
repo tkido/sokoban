@@ -20,6 +20,13 @@ class Solver(data:Data) {
   val canMans = data.canMans
   val canBags = data.canBags
   val neumann = data.neumann
+  //Rotation Map: It rotates vector 90 degrees counterclockwise.
+  val width = data.width
+  val r = Map(-width -> -1,
+              -1 -> width,
+              width -> 1,
+              1 -> -width)
+  val moore = List(-width-1, -width, -width+1, -1, 1, width-1, width, width+1)
   
   var total = 0
   val nodes = MMap[BigInt, Node]()
@@ -65,14 +72,28 @@ class Solver(data:Data) {
       None
     }
     
-    loop() match{
+    val op = loop() match{
       case None => None
-      case Some(node) => return Some(node)
+      case Some(node) =>
+        if(depth == 1)
+          return Some(node) //Clear!!
+        else{
+          Log d "SubClear!!"
+          def addAncestors(node:Node) :List[Node] =
+            if(node.parent.isEmpty) List[Node](node)
+            else node :: addAncestors(nodes(node.parent.get))
+          val list = addAncestors(node)
+          for(node <- list) node.status = Node.LIVE
+          for(id <- bin) nodes(id).status = Node.UNKNOWN
+          Some(node)
+        }
     }
+    stack = stacks.pop
+    bin = bins.pop
+    op
   }
   
   private def evaluate(node: Node) :Option[Node] = {
-    Log d "Start to evaluate this node."
     Log d printer(node)
     if(node.status != Node.UNKNOWN)
       return None
@@ -97,12 +118,67 @@ class Solver(data:Data) {
       node.status = Node.DEAD
       return None
     }
-    /*
     val isOpen = (checked.size + bags.size == canMans.size)
-    if(isOpen && node.sub)
-      return Some(node)
-    */
-    Log d hands
+    if(isOpen && node.sub) return Some(node)
+    
+    if(!isOpen && node.parent.isDefined){
+      val lastBags = ider.fromId(node.parent.get)._2
+      val lastHand = Tuple2((lastBags &~ bags).head, (bags &~ lastBags).head)
+      Log d s"lastHand: ${lastHand}"
+      def isClosed(v:Int, d:Int) :Boolean = {
+        Log d s"isClosed: v = ${v}, d = ${d}"
+        val aims = List(v+d, v+r(d), v-r(d), v+d+r(d), v+d-r(d))
+        Log d s"aims: ${aims}"
+        for(aim <- aims){
+          val newBags = BitSet()
+          def check(v:Int){
+            Log d s"check: v = ${v}"
+            checked += v
+            for(d <- moore if(bags(v+d))){
+              Log d s"added: v+d = ${v+d}"
+              newBags += v+d
+            }
+            for(d <- neumann if(!checked(v+d) && canMans(v+d) && !bags(v+d))) check(v+d)
+          }
+          if(!checked(aim) && canMans(aim) && !bags(aim)){
+            check(aim)
+            Log d s"aim: ${aim}"
+            Log d s"checked: ${checked}"
+            Log d s"newBags: ${newBags}"
+            if(newBags.size < bags.size){
+              val newId = ider.toId(lastHand._1, newBags)
+              val newNode = Node(newId, None, 0, evaluator(newBags), true, Node.UNKNOWN)
+              
+              if(!nodes.contains(newId)){
+                solve(newNode) match{
+                  case None => return true
+                  case Some(node) => () //SubProblem Clear
+                }
+              }else{
+                Log d s"${newId} is Known node!! status = ${nodes(newId).status}"
+                nodes(newId).status match{
+                  case Node.DEAD    => return true
+                  case Node.LIVE    => ()
+                  case Node.CHECKED => ()
+                  case Node.UNKNOWN => solve(newNode) match{
+                                         case None => return true
+                                         case Some(node) => () //SubProblem Clear
+                                       }
+                }
+              }
+            }
+          }
+        }
+        false
+      }
+      if(isClosed(lastHand._2, lastHand._2 - lastHand._1)){
+        Log w s"Closed status checked!!\n${printer(man, bags)}"
+        node.status = Node.DEAD
+        None
+      }
+    }
+    
+    Log d s"Hands: ${hands}"
     hands.foreach{hand =>
       pushBag(hand._1, hand._2)
     }
@@ -111,7 +187,7 @@ class Solver(data:Data) {
       if (lockChecker(newBags, to, to - from)) return
       if (overChecker(to, newBags)) return
       val newId = ider.toId(from, newBags)
-      val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), false, Node.UNKNOWN)
+      val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), node.sub, Node.UNKNOWN)
       if(nodes.contains(newId)){
         Log d s"${newId} is Known. status = ${nodes(newId).status}"
         if(!node.sub){
