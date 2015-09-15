@@ -182,10 +182,10 @@ class Solver(data:Data) {
     hands.foreach{hand =>
       pushBag(hand._1, hand._2)
     }
-    def pushBag(from:Int, to:Int){
+    def pushBag(from:Int, to:Int) :Option[Node] = {
       val newBags = bags - from + to
-      if (lockChecker(newBags, to, to - from)) return
-      if (overChecker(to, newBags)) return
+      if (lockChecker(newBags, to, to - from)) return None
+      if (overChecker(to, newBags)) return None
       val newId = ider.toId(from, newBags)
       val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), node.sub, Node.UNKNOWN)
       if(nodes.contains(newId)){
@@ -193,11 +193,22 @@ class Solver(data:Data) {
         if(!node.sub){
           if(node.count+1 < nodes(newId).count)
             nodes(newId) = newNode
+        }else{
+          nodes(newId).status match{
+            case Node.DEAD    => return None
+            case Node.LIVE    => return Some(nodes(newId))
+            case Node.CHECKED => return None
+            case Node.UNKNOWN => {
+              //stack.push(newId)
+              //stack = stack.sortBy(-nodes(_).value)
+            }
+          }
         }
       }else{
         nodes(newId) = newNode
         stack.push(newId)
       }
+      None
     }
     None
   }
