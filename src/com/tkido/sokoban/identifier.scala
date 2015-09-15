@@ -11,6 +11,7 @@ class Identifier(data:Data) {
   val bagNum = data.bags.size
   val initBags = data.bags.clone
   val initMan = getHome(data.man, initBags)
+  val minHome = data.canBags.min
   
   val spaceNum = data.canBags.sum
   var space = spaceNum
@@ -35,18 +36,27 @@ class Identifier(data:Data) {
     hash = hash * spaceNum + fMap(home)
     hash
   }
+  
+  
   private def getHome(man:Int, bags:BitSet) :Int = {
-    val checked = BitSet()
-    val homes = BitSet(man)
-    def check(v:Int){
+    class GlobalExitException extends RuntimeException
+    def check(v:Int, checked:BitSet, homes:BitSet) :BitSet = {
       checked += v
-      if(data.canBags(v) && !bags(v)) homes += v
+      if(data.canBags(v) && !bags(v)){
+        if(v == minHome) throw new GlobalExitException
+        homes += v
+      }
       for (d <- data.neumann)
         if (!checked(v+d) && data.canMans(v+d) && !bags(v))
-          check(v+d)
+          check(v+d, checked, homes)
+      homes
     }
-    check(man)
-    homes.min
+    try{
+      val homes = check(man, BitSet(), BitSet())
+      homes.min
+    }catch{
+      case e:GlobalExitException => minHome
+    }
   }
   
   def fromId(id:BigInt) :(Int, BitSet) = {
