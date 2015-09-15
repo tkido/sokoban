@@ -2,14 +2,14 @@ package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
-class Evaluator(data:Data, counts:Iterable[Array[Int]]) {
+class Evaluator(data:Data) {
   val gradient = getGradient(data)
   
   def apply(bags:BitSet) :Int =
     bags.toList.map(gradient(_)).sum
   
   private def getGradient(data:Data) :Array[Int] = {
-    val powedCounts = counts.map(_.map{
+    val powedCounts = data.pullCounts.map(_.map{
       case LARGEINT => 0
       case c => scala.math.pow(c.toDouble, 1.2).toInt
     })
@@ -29,8 +29,8 @@ class Evaluator(data:Data, counts:Iterable[Array[Int]]) {
 }
 
 object Evaluator {
-  def apply(data:Data, counts:Iterable[Array[Int]]) =
-    new Evaluator(data, counts)
+  def apply(data:Data) =
+    new Evaluator(data)
 }
 
 

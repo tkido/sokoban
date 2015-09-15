@@ -20,10 +20,10 @@ class Data(
   setBlank()
   setExtra()
   
-  val pullCounts = countPull()
-  setAvoid(pullCounts)
   val pushCounts = countPush()
   setAvoid(pushCounts)
+  val pullCounts = countPull()
+  setAvoid(pullCounts)
   
   /**
    * Set WALLs to unreachable FLOORs.

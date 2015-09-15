@@ -3,8 +3,8 @@ import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
 class LockChecker(data:Data) {
-  //Rotation Map: It rotates vector 90 degrees counterclockwise.
   private val width = data.width
+  //Rotation Map: It rotates vector 90 degrees counterclockwise.
   private val r =
     Map(-width -> -1,
         -1 -> width,
@@ -30,7 +30,7 @@ class LockChecker(data:Data) {
       rst
     }
     val result = sub(to, direction, 0) &&
-                 (locked &~ data.goals).nonEmpty
+                 !locked.subsetOf(data.goals)
     if(result) Log w s"Locked status checked!!"
     result
   }
