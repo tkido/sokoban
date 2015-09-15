@@ -16,8 +16,8 @@ case class Data(
     neumann:List[Int],
     steps:Stack[Int]){
   
-  setBlank
-  setExtra
+  setBlank()
+  setExtra()
   
   /**
    * Set WALLs to unreachable FLOORs.
@@ -65,20 +65,4 @@ case class Data(
     canMans.foreach{check(_)}
   }
   
-}
-
-case class Node(
-    id:BigInt,
-    parent:Option[BigInt],
-    count:Int,
-    value:Int,
-    sub:Boolean,
-    var status:Int){
-  
-}
-object Node{
-  val UNKNOWN = 0
-  val CHECKED = 1
-  val LIVE = 3
-  val DEAD = 4
 }
