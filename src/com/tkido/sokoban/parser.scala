@@ -15,7 +15,7 @@ object Parser{
     '*' -> (BAG | GOAL),
     '#' -> WALL)
   
-  def apply(path:String) :ProblemData = {
+  def apply(path:String) :Data = {
     Log i s"read: ${path}"
     val rawLines = Text.readLines(path)
     
@@ -61,7 +61,7 @@ object Parser{
     val neumann = List(-width, -1, 1, width)
     val steps = Stack[Int]()
     
-    new ProblemData(
+    new Data(
       width,
       height,
       limit,

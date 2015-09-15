@@ -2,13 +2,13 @@ package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
-class Evaluator(data:ProblemData, counts:Iterable[Array[Int]]) {
+class Evaluator(data:Data, counts:Iterable[Array[Int]]) {
   val gradient = getGradient(data)
   
   def getValue(bags:BitSet) :Int =
     bags.toList.map(gradient(_)).sum
   
-  private def getGradient(data:ProblemData) :Array[Int] = {
+  private def getGradient(data:Data) :Array[Int] = {
     val powedCounts = counts.map(_.map{
       case LARGEINT => 0
       case c => scala.math.pow(c.toDouble, 1.2).toInt
@@ -29,13 +29,13 @@ class Evaluator(data:ProblemData, counts:Iterable[Array[Int]]) {
 }
 
 object Evaluator {
-  def apply(data:ProblemData, counts:Iterable[Array[Int]]) =
+  def apply(data:Data, counts:Iterable[Array[Int]]) =
     new Evaluator(data, counts)
 }
 
 
 /*
-class OrderedEvaluator(data:ProblemData, counts:Iterable[Array[Int]], orderedgoals:List[Int]) {
+class OrderedEvaluator(data:Data, counts:Iterable[Array[Int]], orderedgoals:List[Int]) {
   import scala.collection.mutable.{Map => MMap}
   
   val gradientsmap = getGradientsMap()
@@ -60,7 +60,7 @@ class OrderedEvaluator(data:ProblemData, counts:Iterable[Array[Int]], orderedgoa
 
 
 object OrderedEvaluator {
-  def apply(data:ProblemData, counts:Iterable[Array[Int]], orderedgoals:List[Int]) =
+  def apply(data:Data, counts:Iterable[Array[Int]], orderedgoals:List[Int]) =
     new OrderedEvaluator(data, counts, orderedgoals)
 }
 */

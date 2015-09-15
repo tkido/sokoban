@@ -3,7 +3,7 @@ import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
 object BlankSetter {
-  def apply(data:ProblemData) {
+  def apply(data:Data) {
     def check(v:Int, done:BitSet) :BitSet = {
       done += v
       for (d <- data.neumann)

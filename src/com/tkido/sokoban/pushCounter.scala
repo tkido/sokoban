@@ -4,7 +4,7 @@ import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
 object PushCounter{
-  def apply(data:ProblemData) :Iterable[Array[Int]] = {
+  def apply(data:Data) :Iterable[Array[Int]] = {
     def getPushCounts(goal:Int): Array[Int] = {
       def check(v:Int, distance:Int, counts:Array[Int]) :Array[Int] = {
         counts(v) = distance

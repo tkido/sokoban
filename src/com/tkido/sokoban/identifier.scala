@@ -2,7 +2,7 @@ package com.tkido.sokoban
 import scala.collection.mutable.BitSet
 import com.tkido.tools.Log
 
-class Identifier(data:ProblemData) {
+class Identifier(data:Data) {
   import scala.collection.mutable.{Map => MMap}
   
   val fMap = MMap[Int, Int]()
@@ -70,5 +70,5 @@ class Identifier(data:ProblemData) {
 
 
 object Identifier{
-  def apply(data:ProblemData) = new Identifier(data)
+  def apply(data:Data) = new Identifier(data)
 }
