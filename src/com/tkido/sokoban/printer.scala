@@ -1,7 +1,9 @@
 package com.tkido.sokoban
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.BitSet
 
 class Printer(data:Data) {
+  private val ider = Identifier(data)
   private val writeMap = Map(
     FLOOR -> '　',
     GOAL  -> '・',
@@ -15,17 +17,18 @@ class Printer(data:Data) {
     EXTRA -> '△',
     BLANK -> '　')
   
-  val width = data.width
-  val limit = data.limit
+  private val width = data.width
+  private val limit = data.limit
+  private val naked = data.naked
   
-  def apply(data:Data) :String = {
+  def apply(man:Int, bags:BitSet) :String = {
     val buf = new StringBuilder
     var i = 0
     while(i < limit){
-      var x = data.naked(i)
-      if(data.bags(i))
+      var x = naked(i)
+      if(bags(i))
         x |= BAG
-      else if(i == data.man)
+      else if(i == man)
         x |= MAN
       buf += writeMap(x)
       i += 1
@@ -33,6 +36,16 @@ class Printer(data:Data) {
         buf += '\n'
     }
     buf.toString
+  }
+  def apply(data:Data) :String =
+    apply(data.man, data.bags)
+  def apply(id:BigInt) :String = {
+    val (man, bags) = ider.fromId(id)
+    apply(man, bags)
+  }
+  def apply(node:Node) :String = {
+    s"ID:${node.id} parent:${node.parent}\ncount:${node.count} value:${node.value} status:${node.status}\n" +
+    apply(node.id)
   }
 }
 

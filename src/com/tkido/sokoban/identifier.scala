@@ -25,7 +25,7 @@ class Identifier(data:Data) {
     for(m <- Range(1, spaceNum))
       pascal(n)(m) = pascal(n)(m-1) + pascal(n-1)(m-1)
   
-  def getId(man:Int, bags:BitSet):BigInt = {
+  def toId(man:Int, bags:BitSet):BigInt = {
     val home = getHome(man, bags)
     if (!fMap.contains(home)) return INITNODE
     

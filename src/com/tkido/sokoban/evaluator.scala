@@ -5,7 +5,7 @@ import com.tkido.tools.Log
 class Evaluator(data:Data, counts:Iterable[Array[Int]]) {
   val gradient = getGradient(data)
   
-  def getValue(bags:BitSet) :Int =
+  def apply(bags:BitSet) :Int =
     bags.toList.map(gradient(_)).sum
   
   private def getGradient(data:Data) :Array[Int] = {
@@ -23,7 +23,7 @@ class Evaluator(data:Data, counts:Iterable[Array[Int]]) {
       if(gradient(v) == 0 && data.goals(v))
         gradient(v) = LARGEINT*2
     }
-    Log d s"Evaluator gradient:${gradient.toList}"
+    //Log d s"Evaluator gradient:${gradient.toList}"
     gradient
   }
 }
