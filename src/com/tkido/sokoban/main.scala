@@ -12,11 +12,11 @@ object main extends App {
   val printer = Printer(data)
   Log.d(printer(data))
 
-  BlankSetter(data)
-  Log.d(printer(data))
+  //BlankSetter(data)
+  //Log.d(printer(data))
   
-  ExtraSetter(data)
-  Log.d(printer(data))
+  //ExtraSetter(data)
+  //Log.d(printer(data))
   
   val pullCounts = PullCounter(data)
   Log.d(pullCounts)
