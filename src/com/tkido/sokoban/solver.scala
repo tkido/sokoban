@@ -8,6 +8,7 @@ import com.tkido.tools.Log
 class Solver(data:Data) {
   val ider = Identifier(data)
   val lockChecker = LockChecker(data)
+  val overChecker = OverChecker(data)
   val evaluator = Evaluator(data, data.pullCounts)
   val printer = Printer(data)
 
@@ -108,7 +109,7 @@ class Solver(data:Data) {
     def pushBag(from:Int, to:Int){
       val newBags = bags - from + to
       if (lockChecker(newBags, to, to - from)) return
-      //if (overchecker.isOvered(hand.to, new_bags)) return
+      if (overChecker(to, newBags)) return
       val newId = ider.toId(from, newBags)
       val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), false, Node.UNKNOWN)
       if(nodes.contains(newId)){

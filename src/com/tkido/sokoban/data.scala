@@ -81,13 +81,13 @@ class Data(
     }
     check(man, BitSet())
   }
-  private def isDeadEnd(man:Int, bags:BitSet) :Boolean = {
+  def isDeadEnd(man:Int, bags:BitSet) :Boolean = {
     val homes = getHomes(man, bags)
     homes.size < 5 && !homes(initMan)
   }
   private def getHomes(man:Int, bag:Int) :BitSet =
     getHomes(man, BitSet(bag))
-  private def isDeadEnd(man:Int, bag:Int) :Boolean =
+  def isDeadEnd(man:Int, bag:Int) :Boolean =
     isDeadEnd(man, BitSet(bag))
   
   /**

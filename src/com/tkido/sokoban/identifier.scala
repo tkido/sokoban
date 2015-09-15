@@ -1,10 +1,9 @@
 package com.tkido.sokoban
 import scala.collection.mutable.BitSet
+import scala.collection.mutable.{Map => MMap}
 import com.tkido.tools.Log
 
 class Identifier(data:Data) {
-  import scala.collection.mutable.{Map => MMap}
-  
   val fMap = MMap[Int, Int]()
   val rMap = MMap[BigInt, Int]()
   
@@ -53,7 +52,7 @@ class Identifier(data:Data) {
     }
     try{
       val homes = check(man, BitSet(), BitSet())
-      homes.min
+      if(homes.isEmpty) data.initMan else homes.min
     }catch{
       case e:GlobalExitException => minHome
     }
