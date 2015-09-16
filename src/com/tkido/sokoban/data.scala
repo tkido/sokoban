@@ -25,6 +25,60 @@ class Data(
   val pullCounts = countPull()
   setAvoid(pullCounts)
   
+  
+  val initBags = bags
+  val orderedGoals = getOrderedGoals(goals).reverse
+  Log d s"orderedGoals: ${orderedGoals}"
+  
+  def getOrderedGoals(bags:BitSet) :List[Int] = {
+    if(bags.isEmpty) return List[Int]()
+    
+    def canRemove(bag:Int) :Boolean = {
+      val checked = BitSet()
+      val reachableBags = BitSet()
+      def check(v:Int) {
+        checked += v
+        if(initBags(v)) reachableBags += v 
+        for (d <- neumann)
+          if (!checked(v+d) &&
+              canBags(v+d) &&
+              !bags(v+d) &&
+              canMans(v+d*2) &&
+              !bags(v+d*2) &&
+              !isDeadEnd(v+d*2, v+d) )
+            check(v+d)
+      }
+      check(bag)
+      reachableBags.nonEmpty
+    }
+    val removableBags = bags.filter(canRemove)
+    removableBags.toList ::: getOrderedGoals(bags &~ removableBags)
+  }
+  
+  
+  
+  
+  class GoalOrderer(data:Data) {
+  }
+  
+  
+  object GoalOrderer {
+    def apply(data:Data) = new GoalOrderer(data)
+  }  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   /**
    * Set WALLs to unreachable FLOORs.
    */
