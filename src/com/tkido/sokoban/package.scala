@@ -14,5 +14,4 @@ package object sokoban{
   val BONG = BAG | GOAL
   
   val LARGEINT = 99999999
-  val INITNODE = -1
 }

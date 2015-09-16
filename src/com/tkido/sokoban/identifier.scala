@@ -4,6 +4,8 @@ import scala.collection.mutable.{Map => MMap}
 import com.tkido.tools.Log
 
 class Identifier(data:Data) {
+  private val IRREGULAR_INIT_NODE = -1 //Man is out of canBags. It must be initial node 
+  
   private val fMap = MMap[Int, Int]()
   private val rMap = MMap[BigInt, Int]()
   
@@ -12,7 +14,7 @@ class Identifier(data:Data) {
   private val initMan = getHome(data.man, initBags)
   private val minHome = data.canBags.min
   
-  private val spaceNum = data.canBags.sum
+  private val spaceNum = data.canBags.size
   private var space = spaceNum
   data.canBags.foreach{v =>
     space -= 1
@@ -24,10 +26,10 @@ class Identifier(data:Data) {
   for(n <- Range(1, bagNum+1))
     for(m <- Range(1, spaceNum))
       pascal(n)(m) = pascal(n)(m-1) + pascal(n-1)(m-1)
-  
+  Log d pascal.deep
   def toId(man:Int, bags:BitSet):BigInt = {
     val home = getHome(man, bags)
-    if (!fMap.contains(home)) return INITNODE
+    if (!fMap.contains(home)) return IRREGULAR_INIT_NODE
     
     var hash = BigInt(0)
     for((bag, i) <- bags.zipWithIndex)
@@ -57,7 +59,7 @@ class Identifier(data:Data) {
   }
   
   def fromId(id:BigInt) :(Int, BitSet) = {
-    if(id == INITNODE) return (initMan, initBags)
+    if(id == IRREGULAR_INIT_NODE) return (initMan, initBags)
     
     val home = rMap(id % spaceNum)
     val bags = BitSet()
