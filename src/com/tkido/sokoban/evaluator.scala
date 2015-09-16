@@ -34,33 +34,31 @@ object Evaluator {
 }
 
 
-/*
-class OrderedEvaluator(data:Data, counts:Iterable[Array[Int]], orderedgoals:List[Int]) {
-  import scala.collection.mutable.{Map => MMap}
-  
-  val gradientsmap = getGradientsMap()
-  Log i ("OrderedEvaluator gradientsmap:\n", gradientsmap)
+class OrderedEvaluator(data:Data) {
+  val gradientsMap = getGradientsMap()
+  Log i s"OrderedEvaluator gradientsMap: ${gradientsMap}"
   
   private def getGradientsMap() :Map[Int, Array[Int]] = {
-    val gradients = counts.map(_.map(c => if(c < LARGEINT) LARGEINT/(c+1) else 0))
-    val goals = data.goals.toList.sort(_<_)
-    goals.zip(gradients).toMap
+    val gradients = data.pullCounts.map(_.map{
+      case LARGEINT => 0
+      case c => LARGEINT/(c+1)
+    })
+    (data.goals.toList zip gradients).toMap
   }
   
-  def getValue(bags:Set[Int]) = {
-    def addValue(bags:Set[Int], goals:List[Int]) :Int = {
+  def apply(bags:BitSet) = {
+    def addValue(bags:BitSet, goals:List[Int]) :Int = {
       if(bags.isEmpty) 0
-      else if(!bags(goals.head)) bags.map(gradientsmap(goals.head)(_)).sum
+      else if(!bags(goals.head)) bags.toList.map(gradientsMap(goals.head)(_)).sum
       else LARGEINT + addValue(bags - goals.head, goals.tail)
     }
-    addValue(bags:Set[Int], orderedgoals)
+    addValue(bags, data.orderedGoals)
   }
   
 }
 
 
 object OrderedEvaluator {
-  def apply(data:Data, counts:Iterable[Array[Int]], orderedgoals:List[Int]) =
-    new OrderedEvaluator(data, counts, orderedgoals)
+  def apply(data:Data) =
+    new OrderedEvaluator(data)
 }
-*/

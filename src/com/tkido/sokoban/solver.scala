@@ -9,7 +9,7 @@ class Solver(data:Data) {
   val ider = Identifier(data)
   val lockChecker = LockChecker(data)
   val overChecker = OverChecker(data)
-  val evaluator = Evaluator(data)
+  val evaluator = OrderedEvaluator(data) //Evaluator(data)
   val printer = Printer(data)
 
   val initId = ider.toId(data.man, data.bags)

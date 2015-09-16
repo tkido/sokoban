@@ -54,30 +54,7 @@ class Data(
     val removableBags = bags.filter(canRemove)
     removableBags.toList ::: getOrderedGoals(bags &~ removableBags)
   }
-  
-  
-  
-  
-  class GoalOrderer(data:Data) {
-  }
-  
-  
-  object GoalOrderer {
-    def apply(data:Data) = new GoalOrderer(data)
-  }  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
   
   /**
    * Set WALLs to unreachable FLOORs.
@@ -151,7 +128,7 @@ class Data(
   /**
    * Pull a imaginary BAG from each GOAL with counting distance
    */
-  def countPull() :Iterable[Array[Int]] = {
+  def countPull() :List[Array[Int]] = {
     def getPullCounts(goal:Int): Array[Int] = {
       def check(v:Int, distance:Int, counts:Array[Int]) :Array[Int] = {
         counts(v) = distance
@@ -165,13 +142,13 @@ class Data(
       }
       check(goal, 0, Array.fill(limit)(LARGEINT))
     }
-    goals.map(getPullCounts)
+    goals.toList.map(getPullCounts)
   }
   
   /**
    * Push a imaginary BAG from each GOAL with counting distance
    */
-  private def countPush() :Iterable[Array[Int]] = {
+  private def countPush() :List[Array[Int]] = {
     def getPushCounts(goal:Int): Array[Int] = {
       def check(v:Int, distance:Int, counts:Array[Int]) :Array[Int] = {
         counts(v) = distance
@@ -184,13 +161,13 @@ class Data(
       }
       check(goal, 0, Array.fill(limit)(LARGEINT))
     }
-    bags.map(getPushCounts)
+    bags.toList.map(getPushCounts)
   }
   
   /**
    * Set AVOIDs to FLOORs on that BAG cannot be.
    */
-  private def setAvoid(counts:Iterable[Array[Int]]){
+  private def setAvoid(counts:List[Array[Int]]){
     val avoids =
       canBags.filter{i =>
         !counts.exists{arr =>
