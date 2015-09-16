@@ -44,7 +44,7 @@ class Data(
   
   /**
    * Set EXTRA to useless FLOORs.
-   * EXTRA is the same as WALL other than appearance.
+   * EXTRA is the same as WALL other than it's appearance.
    * Now "useless" means dead end widthout GOAL.
    */
   private def setExtra() {
@@ -69,7 +69,7 @@ class Data(
   }
   
   /**
-   * Home is the size of FLOORs that MAN can move on without pushing bags
+   * Home is the size of space on that MAN can move without pushing bags
    */
   private def getHomes(man:Int, bags:BitSet) :BitSet = {
     def check(v:Int, done:BitSet) :BitSet = {
@@ -81,6 +81,10 @@ class Data(
     }
     check(man, BitSet())
   }
+  
+  /**
+   * Home is smaller than 5 inevitably, except for initial situation.
+   */
   def isDeadEnd(man:Int, bags:BitSet) :Boolean = {
     val homes = getHomes(man, bags)
     homes.size < 5 && !homes(initMan)
