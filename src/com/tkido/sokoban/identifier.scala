@@ -38,11 +38,11 @@ class Identifier(data:Data) {
   }
   
   private def getHome(man:Int, bags:BitSet) :Int = {
-    class Found extends RuntimeException
+    class FoundException extends RuntimeException
     def check(v:Int, checked:BitSet, homes:BitSet) :BitSet = {
       checked += v
       if(data.canBags(v) && !bags(v)){
-        if(v == minHome) throw new Found
+        if(v == minHome) throw new FoundException
         homes += v
       }
       for (d <- data.neumann)
@@ -54,7 +54,7 @@ class Identifier(data:Data) {
       val homes = check(man, BitSet(), BitSet())
       if(homes.isEmpty) data.initMan else homes.min
     }catch{
-      case e:Found => minHome
+      case e:FoundException => minHome
     }
   }
   

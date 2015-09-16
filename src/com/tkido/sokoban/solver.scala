@@ -30,82 +30,71 @@ class Solver(data:Data) {
   
   var total = 0
   val nodes = MMap[BigInt, Node]()
-  var stack = Stack[BigInt]()
-  val stacks = Stack[Stack[BigInt]]()
-  var bin = Stack[BigInt]()
-  val bins = Stack[Stack[BigInt]]()
+  val todos = Stack[Stack[BigInt]]()
+  val dones = Stack[Stack[BigInt]]()
+  var todo = Stack[BigInt]()
+  var done = Stack[BigInt]()
   
   Log f printer(initNode)
-  solve(initNode) match{
-    case None => Log f "Impossible!!"
-    case Some(node) => {
-      Log f "Cleared!!"
-      Log f printer(node)
-    }
-  }
   
-  private def solve(intNode:Node) :Option[Node] = {
-    var node = intNode
-    stacks.push(stack)
-    bins.push(bin)
-    stack = Stack[BigInt]()
-    bin = Stack[BigInt]()
+  if(solve(initNode))
+    Log f "Clear!!"
+  else
+    Log f "Impossible!!"
+  
+  private def solve(initNode:Node) :Boolean = {
+    var node = initNode
+    todos.push(todo)
+    dones.push(done)
+    todo = Stack[BigInt]()
+    done = Stack[BigInt]()
     nodes(node.id) = node
-    stack.push(node.id)
-    val depth = stacks.size
+    todo.push(node.id)
+    val depth = todos.size
     var count = 0
     
-    def loop() :Option[Node] = {
-      while(stack.nonEmpty){
+    def loop() :Boolean = {
+      while(todo.nonEmpty){
         total += 1
         count += 1
         Log i s"(${count}/${total}:${depth})th evaluation"
-        var id = stack.pop()
-        bin.push(id)
+        var id = todo.pop()
+        Log d s"todo.size = ${todo.size}"
+        done.push(id)
         node = nodes(id)
-        evaluate(node) match{
-          case None => ()
-          case Some(node) => return Some(node)
-        }
-        stack = stack.sortBy(-nodes(_).value)
+        if(evaluate(node)) return true
+        todo = todo.sortBy(-nodes(_).value)
       }
-      None
+      false
     }
-    
-    val op = loop() match{
-      case None =>
-        for(id <- bin) nodes(id).status = Node.DEAD
-        None
-      case Some(node) =>
-        if(depth == 1)
-          return Some(node) //Clear!!
-        else{
-          Log d "SubClear!!"
-          def addAncestors(node:Node) :List[Node] =
-            if(node.parent.isEmpty) List[Node](node)
-            else node :: addAncestors(nodes(node.parent.get))
-          val list = addAncestors(node)
-          for(node <- list) node.status = Node.LIVE
-          for(id <- bin)
-            if(nodes(id).status == Node.CHECKED)
-              nodes(id).status = Node.UNKNOWN
-          Some(node)
-        }
+    val result = loop()
+    if(result){
+      if(depth > 1){
+        def addAncestors(node:Node) :List[Node] =
+          if(node.parent.isEmpty) List[Node](node)
+          else node :: addAncestors(nodes(node.parent.get))
+        val list = addAncestors(node)
+        for(node <- list) node.status = Node.LIVE
+        for(id <- done)
+          if(nodes(id).status == Node.CHECKED)
+            nodes(id).status = Node.UNKNOWN
+      }
+    }else{
+      if(depth > 1)
+        for(id <- done) nodes(id).status = Node.DEAD
     }
-    stack = stacks.pop
-    bin = bins.pop
-    op
+    todo = todos.pop
+    done = dones.pop
+    result
   }
   
-  private def evaluate(node: Node) :Option[Node] = {
+  private def evaluate(node:Node) :Boolean = {
     Log d printer(node)
-    if(node.status != Node.UNKNOWN)
-      return None
+    if(node.status != Node.UNKNOWN) return false
     node.status = Node.CHECKED
     
     val (man, bags) = ider.fromId(node.id)
-    if((bags &~ goals).isEmpty)
-      return Some(node)
+    if(bags.subsetOf(goals)) return true
     def check(v:Int, checked:BitSet, hands:MSet[(Int, Int)]) :(BitSet, MSet[(Int, Int)]) = {
       checked += v
       for (d <- neumann){
@@ -120,10 +109,10 @@ class Solver(data:Data) {
     
     if(hands.isEmpty){
       node.status = Node.DEAD
-      return None
+      return false
     }
     val isOpen = (checked.size + bags.size == canMans.size)
-    if(isOpen && node.sub) return Some(node)
+    if(isOpen && node.sub) return true
     
     if(!isOpen && node.parent.isDefined){
       val lastBags = ider.fromId(node.parent.get)._2
@@ -144,20 +133,15 @@ class Solver(data:Data) {
               val newNode = Node(newId, None, 0, evaluator(newBags), true, Node.UNKNOWN)
               
               if(!nodes.contains(newId)){
-                solve(newNode) match{
-                  case None => return true
-                  case Some(node) => () //SubProblem Clear
-                }
+                if(!solve(newNode)) return true
               }else{
                 Log d s"${newId} is Known node!! status = ${nodes(newId).status}"
                 nodes(newId).status match{
                   case Node.DEAD    => return true
                   case Node.LIVE    => ()
                   case Node.CHECKED => sys.error("MUST NOT HAPPEN!!")
-                  case Node.UNKNOWN => solve(newNode) match{
-                                         case None => return true
-                                         case Some(node) => () //SubProblem Clear
-                                       }
+                  case Node.UNKNOWN => if(!solve(newNode)) return true
+ 
                 }
               }
             }
@@ -168,21 +152,14 @@ class Solver(data:Data) {
       if(isClosed(lastHand._2, lastHand._2 - lastHand._1)){
         Log w s"Closed status checked!!\n${printer(man, bags)}"
         node.status = Node.DEAD
-        None
+        return false
       }
     }
-    
-    Log d s"Hands: ${hands}"
-    hands.foreach{hand =>
-      pushBag(hand._1, hand._2) match{
-        case None => ()
-        case Some(node) => return Some(node)
-      }
-    }
-    def pushBag(from:Int, to:Int) :Option[Node] = {
+
+    def pushBag(from:Int, to:Int) :Boolean = {
       val newBags = bags - from + to
-      if (lockChecker(newBags, to, to - from)) return None
-      if (overChecker(to, newBags)) return None
+      if (lockChecker(newBags, to, to - from)) return false
+      if (overChecker(to, newBags)) return false
       val newId = ider.toId(from, newBags)
       val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), node.sub, Node.UNKNOWN)
       if(nodes.contains(newId)){
@@ -192,22 +169,23 @@ class Solver(data:Data) {
             nodes(newId) = newNode
         }else{
           nodes(newId).status match{
-            case Node.DEAD    => return None
-            case Node.LIVE    => return Some(node)
-            case Node.CHECKED => return None
+            case Node.DEAD    => return false
+            case Node.LIVE    => return true
+            case Node.CHECKED => return false
             case Node.UNKNOWN => {
-              stack.push(newId)
-              //stack = stack.sortBy(-nodes(_).value)
+              todo.push(newId)
             }
           }
         }
       }else{
         nodes(newId) = newNode
-        stack.push(newId)
+        todo.push(newId)
       }
-      None
+      false
     }
-    None
+    Log d s"Hands: ${hands}"
+    for(hand <- hands) if(pushBag(hand._1, hand._2)) return true
+    false
   }
 }
 
