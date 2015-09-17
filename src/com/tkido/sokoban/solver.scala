@@ -20,12 +20,10 @@ class Solver(data:Data) {
   val canMans = data.canMans
   val canBags = data.canBags
   val neumann = data.neumann
-  //Rotation Map: It rotates vector 90 degrees counterclockwise.
   val width = data.width
-  val r = Map(-width -> -1,
-              -1 -> width,
-              width -> 1,
-              1 -> -width)
+  //Rotation Map: It rotates vector 90 degrees counterclockwise.
+  val r = Map(-width -> -1, -1 -> width, width -> 1, 1 -> -width)
+  //Moore neighborhood. See for details "https://en.wikipedia.org/wiki/Moore_neighborhood".
   val moore = List(-width-1, -width, -width+1, -1, 1, width-1, width, width+1)
   
   var total = 0
@@ -39,7 +37,7 @@ class Solver(data:Data) {
   Log f printer(initNode)
   
   if(solve(initNode))
-    Log f s"Clear!!\n${printer(node)}"
+    Log f s"Clear!!"
   else
     Log f "Impossible!!"
   
@@ -75,6 +73,7 @@ class Solver(data:Data) {
         if(node.parent.isEmpty) List[Node](node)
         else node :: addAncestors(nodes(node.parent.get))
       val list = addAncestors(node)
+      if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
       for(node <- list) node.status = Node.LIVE
       for(id <- done)
         if(nodes(id).status == Node.CHECKED)
