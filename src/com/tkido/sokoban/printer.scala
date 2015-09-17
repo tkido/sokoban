@@ -45,8 +45,16 @@ class Printer(data:Data) {
     apply(man, bags)
   }
   def apply(node:Node) :String = {
-    s"ID:${node.id} parent:${node.parent}\ncount:${node.count} value:${node.value} status:${node.status}\n" +
-    apply(node.id)
+    val header = s"ID:${node.id} parent:${node.parent}\ncount:${node.count} value:${node.value} status:${node.status}\n"
+    val body = node.parent match{
+      case None => apply(node.id)
+      case Some(parentId) =>
+        val bags = ider.fromId(node.id)._2
+        val lastBags = ider.fromId(parentId)._2
+        val lastBag = (lastBags &~ bags).head
+        apply(lastBag, bags)
+    }
+    header + body
   }
 }
 

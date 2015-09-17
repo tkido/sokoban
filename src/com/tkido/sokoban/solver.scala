@@ -73,11 +73,11 @@ class Solver(data:Data) {
         if(node.parent.isEmpty) List[Node](node)
         else node :: addAncestors(nodes(node.parent.get))
       val list = addAncestors(node)
-      if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
       for(node <- list) node.status = Node.LIVE
       for(id <- done)
         if(nodes(id).status == Node.CHECKED)
           nodes(id).status = Node.UNKNOWN
+      if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
     }else{
       for(id <- done) nodes(id).status = Node.DEAD
     }
