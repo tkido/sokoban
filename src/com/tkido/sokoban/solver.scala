@@ -34,16 +34,17 @@ class Solver(data:Data) {
   val dones = Stack[Stack[BigInt]]()
   var todo = Stack[BigInt]()
   var done = Stack[BigInt]()
+  var node = initNode
   
   Log f printer(initNode)
   
   if(solve(initNode))
-    Log f "Clear!!"
+    Log f s"Clear!!\n${printer(node)}"
   else
     Log f "Impossible!!"
   
   private def solve(initNode:Node) :Boolean = {
-    var node = initNode
+    node = initNode
     todos.push(todo)
     dones.push(done)
     todo = Stack[BigInt]()
@@ -140,7 +141,7 @@ class Solver(data:Data) {
                 nodes(newId).status match{
                   case Node.DEAD    => return true
                   case Node.LIVE    => ()
-                  case Node.CHECKED => sys.error("MUST NOT HAPPEN!!")
+                  case Node.CHECKED => throw new MustNotHappenException
                   case Node.UNKNOWN => if(!solve(newNode)) return true
  
                 }
