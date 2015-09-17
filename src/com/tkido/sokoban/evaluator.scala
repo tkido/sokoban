@@ -46,7 +46,7 @@ class OrderedEvaluator(data:Data) {
     (data.goals.toList zip gradients).toMap
   }
   
-  def apply(bags:BitSet) = {
+  def apply(bags:BitSet) :Int = {
     def addValue(bags:BitSet, goals:List[Int]) :Int = {
       if(bags.isEmpty) 0
       else if(!bags(goals.head)) bags.toList.map(gradientsMap(goals.head)(_)).sum

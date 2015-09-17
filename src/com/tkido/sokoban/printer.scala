@@ -35,6 +35,7 @@ class Printer(data:Data) {
       if ((i % width) == 0)
         buf += '\n'
     }
+    buf += '★'
     buf.toString
   }
   def apply(data:Data) :String =
