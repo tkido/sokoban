@@ -62,8 +62,9 @@ class Solver(data:Data) {
         Log d s"todo.size = ${todo.size}"
         done.push(id)
         node = nodes(id)
-        if(evaluate(node)) return true
+        val result = evaluate(node)
         todo = todo.sortBy(-nodes(_).value)
+        if(result) return true
       }
       false
     }
@@ -95,17 +96,20 @@ class Solver(data:Data) {
     
     val (man, bags) = ider.fromId(node.id)
     if(bags.subsetOf(goals)) return true
-    def check(v:Int, checked:BitSet, hands:MSet[(Int, Int)]) :(BitSet, MSet[(Int, Int)]) = {
+    def check(v:Int, checked:BitSet, reachedBags:BitSet, hands:MSet[(Int, Int)]) :(BitSet, BitSet, MSet[(Int, Int)]) = {
       checked += v
       for (d <- neumann){
-        if(bags(v+d) && canBags(v+d*2) && !bags(v+d*2))
-          hands += Tuple2(v+d, v+d*2)
+        if(bags(v+d)){
+          reachedBags += v+d
+          if(canBags(v+d*2) && !bags(v+d*2))
+            hands += Tuple2(v+d, v+d*2) 
+        }
         if(!checked(v+d) && canMans(v+d) && !bags(v+d))
-          check(v+d, checked, hands)
+          check(v+d, checked, reachedBags, hands)
       }
-      (checked, hands)
+      (checked, reachedBags, hands)
     }
-    val (checked, hands) = check(man, BitSet(), MSet[(Int, Int)]())
+    val (checked, reachedBags, hands) = check(man, BitSet(), BitSet(), MSet[(Int, Int)]())
     
     if(hands.isEmpty){
       node.status = Node.DEAD
@@ -124,7 +128,7 @@ class Solver(data:Data) {
           def check(v:Int){
             checked += v
             for(d <- moore if(bags(v+d))) newBags += v+d
-            for(d <- neumann if(!checked(v+d) && canMans(v+d) && !bags(v+d))) check(v+d)
+            for(d <- neumann if(!checked(v+d) && canMans(v+d) && !reachedBags(v+d))) check(v+d)
           }
           if(!checked(aim) && canMans(aim) && !bags(aim)){
             check(aim)
