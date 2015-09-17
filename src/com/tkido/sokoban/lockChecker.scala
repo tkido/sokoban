@@ -4,6 +4,7 @@ import com.tkido.tools.Log
 
 class LockChecker(data:Data) {
   private val width = data.width
+  private val canBags = data.canBags
   //Rotation Map: It rotates vector 90 degrees counterclockwise.
   private val r =
     Map(-width -> -1,
@@ -20,7 +21,7 @@ class LockChecker(data:Data) {
         }else if(bags(v)){
           locked += v
           (depth > 0 || sub(v+d, d, depth+1)) &&
-          ((!data.canBags(v+r(d)) && !data.canBags(v-r(d))) ||
+          ((!canBags(v+r(d)) && !canBags(v-r(d))) ||
            sub(v+r(d),  r(d), depth+1) ||
            sub(v-r(d), -r(d), depth+1) )
         }else{
