@@ -70,19 +70,16 @@ class Solver(data:Data) {
     }
     val result = loop()
     if(result){
-      if(depth > 1){
-        def addAncestors(node:Node) :List[Node] =
-          if(node.parent.isEmpty) List[Node](node)
-          else node :: addAncestors(nodes(node.parent.get))
-        val list = addAncestors(node)
-        for(node <- list) node.status = Node.LIVE
-        for(id <- done)
-          if(nodes(id).status == Node.CHECKED)
-            nodes(id).status = Node.UNKNOWN
-      }
+      def addAncestors(node:Node) :List[Node] =
+        if(node.parent.isEmpty) List[Node](node)
+        else node :: addAncestors(nodes(node.parent.get))
+      val list = addAncestors(node)
+      for(node <- list) node.status = Node.LIVE
+      for(id <- done)
+        if(nodes(id).status == Node.CHECKED)
+          nodes(id).status = Node.UNKNOWN
     }else{
-      if(depth > 1)
-        for(id <- done) nodes(id).status = Node.DEAD
+      for(id <- done) nodes(id).status = Node.DEAD
     }
     todo = todos.pop
     done = dones.pop
@@ -176,9 +173,7 @@ class Solver(data:Data) {
             case Node.DEAD    => return false
             case Node.LIVE    => return true
             case Node.CHECKED => return false
-            case Node.UNKNOWN => {
-              todo.push(newId)
-            }
+            case Node.UNKNOWN => todo.push(newId)
           }
         }
       }else{
