@@ -1,5 +1,7 @@
 package com.tkido
 package object sokoban{
+  class MustNotHappenException extends RuntimeException
+  
   val FLOOR =  0
   val GOAL  =  1
   val MAN   =  2
@@ -14,5 +16,4 @@ package object sokoban{
   val BONG = BAG | GOAL
   
   val LARGEINT = 99999999
-  val INITNODE = -1
 }

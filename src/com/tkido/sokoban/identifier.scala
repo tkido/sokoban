@@ -4,45 +4,45 @@ import scala.collection.mutable.{Map => MMap}
 import com.tkido.tools.Log
 
 class Identifier(data:Data) {
-  val fMap = MMap[Int, Int]()
-  val rMap = MMap[BigInt, Int]()
+  private val IRREGULAR_INIT_NODE = -1 //Man is out of canBags. It must be initial node 
   
-  val bagNum = data.bags.size
-  val initBags = data.bags.clone
-  val initMan = getHome(data.man, initBags)
-  val minHome = data.canBags.min
+  private val fMap = MMap[Int, Int]()
+  private val rMap = MMap[BigInt, Int]()
   
-  val spaceNum = data.canBags.sum
-  var space = spaceNum
+  private val bagNum = data.bags.size
+  private val initBags = data.bags.clone
+  private val initMan = getHome(data.man, initBags)
+  private val minHome = data.canBags.min
+  
+  private val spaceNum = data.canBags.size
+  private var space = spaceNum
   data.canBags.foreach{v =>
     space -= 1
     fMap(v) = space
     rMap(BigInt(space)) = v
   }
  
-  val pascal = Array.fill[BigInt](bagNum+1, spaceNum)(1)
+  private val pascal = Array.fill[BigInt](bagNum+1, spaceNum)(1)
   for(n <- Range(1, bagNum+1))
     for(m <- Range(1, spaceNum))
       pascal(n)(m) = pascal(n)(m-1) + pascal(n-1)(m-1)
-  
+  Log d pascal.deep
   def toId(man:Int, bags:BitSet):BigInt = {
     val home = getHome(man, bags)
-    if (!fMap.contains(home)) return INITNODE
+    if (!fMap.contains(home)) return IRREGULAR_INIT_NODE
     
     var hash = BigInt(0)
     for((bag, i) <- bags.zipWithIndex)
       hash += pascal(bagNum-i)(fMap(bag))
-    hash = hash * spaceNum + fMap(home)
-    hash
+    hash * spaceNum + fMap(home)
   }
   
-  
   private def getHome(man:Int, bags:BitSet) :Int = {
-    class GlobalExitException extends RuntimeException
+    class FoundException extends RuntimeException
     def check(v:Int, checked:BitSet, homes:BitSet) :BitSet = {
       checked += v
       if(data.canBags(v) && !bags(v)){
-        if(v == minHome) throw new GlobalExitException
+        if(v == minHome) throw new FoundException
         homes += v
       }
       for (d <- data.neumann)
@@ -54,12 +54,12 @@ class Identifier(data:Data) {
       val homes = check(man, BitSet(), BitSet())
       if(homes.isEmpty) data.initMan else homes.min
     }catch{
-      case e:GlobalExitException => minHome
+      case e:FoundException => minHome
     }
   }
   
   def fromId(id:BigInt) :(Int, BitSet) = {
-    if(id == INITNODE) return (initMan, initBags)
+    if(id == IRREGULAR_INIT_NODE) return (initMan, initBags)
     
     val home = rMap(id % spaceNum)
     val bags = BitSet()

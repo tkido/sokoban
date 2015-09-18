@@ -20,10 +20,41 @@ class Data(
   setBlank()
   setExtra()
   
-  val pullCounts = countPull()
-  setAvoid(pullCounts)
   val pushCounts = countPush()
   setAvoid(pushCounts)
+  val pullCounts = countPull()
+  setAvoid(pullCounts)
+  
+  
+  val initBags = bags
+  val orderedGoals = getOrderedGoals(goals).reverse
+  Log d s"orderedGoals: ${orderedGoals}"
+  
+  def getOrderedGoals(bags:BitSet) :List[Int] = {
+    if(bags.isEmpty) return List[Int]()
+    
+    def canRemove(bag:Int) :Boolean = {
+      val checked = BitSet()
+      val reachableBags = BitSet()
+      def check(v:Int) {
+        checked += v
+        if(initBags(v)) reachableBags += v 
+        for (d <- neumann)
+          if (!checked(v+d) &&
+              canBags(v+d) &&
+              !bags(v+d) &&
+              canMans(v+d*2) &&
+              !bags(v+d*2) &&
+              !isDeadEnd(v+d*2, v+d) )
+            check(v+d)
+      }
+      check(bag)
+      reachableBags.nonEmpty
+    }
+    val removableBags = bags.filter(canRemove)
+    removableBags.toList ::: getOrderedGoals(bags &~ removableBags)
+  }
+
   
   /**
    * Set WALLs to unreachable FLOORs.
@@ -44,7 +75,7 @@ class Data(
   
   /**
    * Set EXTRA to useless FLOORs.
-   * EXTRA is the same as WALL other than appearance.
+   * EXTRA is the same as WALL other than it's appearance.
    * Now "useless" means dead end widthout GOAL.
    */
   private def setExtra() {
@@ -69,7 +100,7 @@ class Data(
   }
   
   /**
-   * Home is the size of FLOORs that MAN can move on without pushing bags
+   * Home is the size of space on that MAN can move without pushing bags
    */
   private def getHomes(man:Int, bags:BitSet) :BitSet = {
     def check(v:Int, done:BitSet) :BitSet = {
@@ -81,6 +112,10 @@ class Data(
     }
     check(man, BitSet())
   }
+  
+  /**
+   * Home is smaller than 5 inevitably, except for initial situation.
+   */
   def isDeadEnd(man:Int, bags:BitSet) :Boolean = {
     val homes = getHomes(man, bags)
     homes.size < 5 && !homes(initMan)
@@ -93,7 +128,7 @@ class Data(
   /**
    * Pull a imaginary BAG from each GOAL with counting distance
    */
-  def countPull() :Iterable[Array[Int]] = {
+  def countPull() :List[Array[Int]] = {
     def getPullCounts(goal:Int): Array[Int] = {
       def check(v:Int, distance:Int, counts:Array[Int]) :Array[Int] = {
         counts(v) = distance
@@ -107,13 +142,13 @@ class Data(
       }
       check(goal, 0, Array.fill(limit)(LARGEINT))
     }
-    goals.map(getPullCounts)
+    goals.toList.map(getPullCounts)
   }
   
   /**
    * Push a imaginary BAG from each GOAL with counting distance
    */
-  private def countPush() :Iterable[Array[Int]] = {
+  private def countPush() :List[Array[Int]] = {
     def getPushCounts(goal:Int): Array[Int] = {
       def check(v:Int, distance:Int, counts:Array[Int]) :Array[Int] = {
         counts(v) = distance
@@ -126,13 +161,13 @@ class Data(
       }
       check(goal, 0, Array.fill(limit)(LARGEINT))
     }
-    bags.map(getPushCounts)
+    bags.toList.map(getPushCounts)
   }
   
   /**
-   * Set AVOIDs to FLOORs that BAG cannot be.
+   * Set AVOIDs to FLOORs on that BAG cannot be.
    */
-  private def setAvoid(counts:Iterable[Array[Int]]){
+  private def setAvoid(counts:List[Array[Int]]){
     val avoids =
       canBags.filter{i =>
         !counts.exists{arr =>
