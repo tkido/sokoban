@@ -15,3 +15,19 @@ object Node{
   val LIVE = 3
   val DEAD = 4
 }
+
+case class Hand(from:Int, to:Int){
+  def delta = to - from
+  
+  def direction :Int = {
+    val del = delta
+    val delAbs = del.abs
+    if(delAbs >= Hand.width)
+      del / (delAbs / Hand.width)
+    else
+      del / delAbs
+  }
+}
+object Hand{
+  var width = -1
+}
