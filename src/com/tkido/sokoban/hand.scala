@@ -1,13 +1,13 @@
 package com.tkido.sokoban
 
-case class Hand(from:Int, to:Int){
+case class Hand(from:Int, to:Int, width:Int){
   def delta = to - from
   
   def direction :Int = {
     val del = delta
     val delAbs = del.abs
-    if(delAbs >= Hand.width)
-      del / (delAbs / Hand.width)
+    if(delAbs >= width)
+      del / (delAbs / width)
     else
       del / delAbs
   }
@@ -15,6 +15,11 @@ case class Hand(from:Int, to:Int){
   override def toString :String =
     "(%d->%d)".format(from, to)
 }
-object Hand{
-  var width = -1
+
+
+class HandFactory(width:Int){
+  def apply(from:Int, to:Int) = Hand(from, to, width)
+}
+object HandFactory{
+  def apply(width:Int) = new HandFactory(width)
 }

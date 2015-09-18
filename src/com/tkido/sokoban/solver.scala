@@ -13,6 +13,8 @@ class Solver(data:Data) {
   val overChecker = OverChecker(data)
   val evaluator = OrderedEvaluator(data) //Evaluator(data)
   val printer = Printer(data)
+  
+  val Hand = HandFactory(data.width)
 
   val initId = ider.toId(data.man, data.bags)
   val initNode = Node(initId, None, 0, evaluator(data.bags), false, null, Node.UNKNOWN)
@@ -103,7 +105,7 @@ class Solver(data:Data) {
         if(bags(v+d)){
           reachedBags += v+d
           if(canBags(v+d*2) && !bags(v+d*2))
-            hands += Hand(v+d, v+d*2) 
+            hands += Hand(v+d, v+d*2)
         }
         if(!checked(v+d) && canMans(v+d) && !bags(v+d))
           check(v+d, checked, reachedBags, hands)
