@@ -12,6 +12,14 @@ case class Hand(from:Int, to:Int, width:Int){
       del / delAbs
   }
   
+  def size :Int = {
+    val delAbs = delta.abs
+    if(delAbs >= width)
+      delAbs / width
+    else
+      delAbs
+  }
+  
   override def toString :String =
     "(%d->%d)".format(from, to)
 }

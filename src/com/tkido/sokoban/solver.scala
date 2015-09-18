@@ -104,8 +104,11 @@ class Solver(data:Data) {
       for (d <- neumann){
         if(bags(v+d)){
           reachedBags += v+d
-          if(canBags(v+d*2) && !bags(v+d*2))
-            hands += Hand(v+d, v+d*2)
+          var range = 2
+          while(canBags(v+d*range) && !bags(v+d*range)){
+            hands += Hand(v+d, v+d*range)
+            range += 1
+          }
         }
         if(!checked(v+d) && canMans(v+d) && !bags(v+d))
           check(v+d, checked, reachedBags, hands)
@@ -163,10 +166,10 @@ class Solver(data:Data) {
 
     def pushBag(hand:Hand) :Boolean = {
       val newBags = bags - hand.from + hand.to
-      if (lockChecker(newBags, hand.to, hand.delta)) return false
+      if (lockChecker(newBags, hand.to, hand.direction)) return false
       if (overChecker(hand.to, newBags)) return false
       val newId = ider.toId(hand.from, newBags)
-      val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), node.sub, hand, Node.UNKNOWN)
+      val newNode = Node(newId, Some(node.id), node.count + hand.size, evaluator(newBags), node.sub, hand, Node.UNKNOWN)
       if(nodes.contains(newId)){
         //Log d s"${newId} is Known. status = ${nodes(newId).status}"
         if(!node.sub){
