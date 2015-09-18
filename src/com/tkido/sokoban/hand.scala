@@ -3,22 +3,17 @@ package com.tkido.sokoban
 case class Hand(from:Int, to:Int, width:Int){
   def delta = to - from
   
-  def direction :Int = {
-    val del = delta
-    val delAbs = del.abs
-    if(delAbs >= width)
-      del / (delAbs / width)
-    else
-      del / delAbs
-  }
+  def direction :Int =
+    delta.abs match{
+      case n if(n < width) => delta / n
+      case n => delta.signum * width
+    }
   
-  def size :Int = {
-    val delAbs = delta.abs
-    if(delAbs >= width)
-      delAbs / width
-    else
-      delAbs
-  }
+  def size :Int =
+    delta.abs match{
+      case n if(n < width) => n
+      case n => n / width
+    }
   
   override def toString :String =
     "(%d->%d)".format(from, to)
