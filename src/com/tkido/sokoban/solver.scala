@@ -6,6 +6,8 @@ import scala.collection.mutable.{Set => MSet}
 import com.tkido.tools.Log
 
 class Solver(data:Data) {
+  class MustNotHappenException extends RuntimeException
+  
   val ider = Identifier(data)
   val lockChecker = LockChecker(data)
   val overChecker = OverChecker(data)
@@ -55,9 +57,8 @@ class Solver(data:Data) {
       while(todo.nonEmpty){
         total += 1
         count += 1
-        Log i s"(${count}/${total}:${depth})th evaluation"
+        Log i s"${depth}(${count}/${total})th evaluation(todo.size = ${todo.size})"
         var id = todo.pop()
-        Log d s"todo.size = ${todo.size}"
         done.push(id)
         node = nodes(id)
         val result = evaluate(node)
@@ -73,12 +74,16 @@ class Solver(data:Data) {
         else node :: addAncestors(nodes(node.parent.get))
       val list = addAncestors(node)
       for(node <- list) node.status = Node.LIVE
+      //for(id <- done) Log d s"There are LIVE!!\n${printer(id)}"
       for(id <- done)
-        if(nodes(id).status == Node.CHECKED)
+        if(nodes(id).status == Node.CHECKED){
           nodes(id).status = Node.UNKNOWN
+          //Log d s"There are UNKNOWN!!\n${printer(id)}"
+        }
       //if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
     }else{
       for(id <- done) nodes(id).status = Node.DEAD
+      //for(id <- done) Log d s"There are DEAD!!\n${printer(id)}"
     }
     todo = todos.pop
     done = dones.pop
@@ -163,7 +168,7 @@ class Solver(data:Data) {
       val newId = ider.toId(from, newBags)
       val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), node.sub, Node.UNKNOWN)
       if(nodes.contains(newId)){
-        Log d s"${newId} is Known. status = ${nodes(newId).status}"
+        //Log d s"${newId} is Known. status = ${nodes(newId).status}"
         if(!node.sub){
           if(node.count+1 < nodes(newId).count)
             nodes(newId) = newNode

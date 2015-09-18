@@ -45,7 +45,8 @@ class Printer(data:Data) {
     apply(man, bags)
   }
   def apply(node:Node) :String = {
-    val header = s"ID:${node.id} parent:${node.parent}\ncount:${node.count} value:${node.value} status:${node.status}\n"
+    val depth = if(node.sub) "sub" else "MAIN"
+    val header = s"${depth} push:${node.count} value:${node.value} id:${node.id} parent:${node.parent}\n"
     val body = node.parent match{
       case None => apply(node.id)
       case Some(parentId) =>
