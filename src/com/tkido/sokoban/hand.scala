@@ -4,10 +4,7 @@ case class Hand(from:Int, to:Int, width:Int){
   def delta = to - from
   
   def direction :Int =
-    delta.abs match{
-      case n if(n < width) => delta / n
-      case n => delta.signum * width
-    }
+    delta.signum * (if(delta.abs < width) 1 else width)
   
   def size :Int =
     delta.abs match{
