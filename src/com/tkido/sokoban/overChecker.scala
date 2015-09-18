@@ -5,7 +5,6 @@ import com.tkido.tools.Log
 
 class OverChecker(data:Data) {
   val bagsSize = data.bags.size
-  val naked = data.naked
   
   val pullables = data.pullCounts.map(_.map{
     case LARGEINT => 0
