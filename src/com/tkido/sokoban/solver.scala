@@ -21,10 +21,9 @@ class Solver(data:Data) {
   val canBags = data.canBags
   val neumann = data.neumann
   val width = data.width
-  //Rotation Map: It rotates vector 90 degrees counterclockwise.
-  val r = Map(-width -> -1, -1 -> width, width -> 1, 1 -> -width)
-  //Moore neighborhood. See for details "https://en.wikipedia.org/wiki/Moore_neighborhood".
-  val moore = List(-width-1, -width, -width+1, -1, 1, width-1, width, width+1)
+  
+  val r = Map(-width -> -1, -1 -> width, width -> 1, 1 -> -width) //Rotation Map: It rotates vector 90 degrees counterclockwise.
+  val moore = List(-width-1, -width, -width+1, -1, 1, width-1, width, width+1) //Moore neighborhood. See for details "https://en.wikipedia.org/wiki/Moore_neighborhood".
   
   var total = 0
   val nodes = MMap[BigInt, Node]()
@@ -77,7 +76,7 @@ class Solver(data:Data) {
       for(id <- done)
         if(nodes(id).status == Node.CHECKED)
           nodes(id).status = Node.UNKNOWN
-      if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
+      //if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
     }else{
       for(id <- done) nodes(id).status = Node.DEAD
     }
@@ -186,6 +185,7 @@ class Solver(data:Data) {
     for(hand <- hands) if(pushBag(hand._1, hand._2)) return true
     false
   }
+  
 }
 
 object Solver {
