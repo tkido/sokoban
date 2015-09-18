@@ -145,7 +145,6 @@ class Solver(data:Data) {
                   case Node.LIVE    => ()
                   case Node.CHECKED => throw new MustNotHappenException
                   case Node.UNKNOWN => if(!solve(newNode)) return true
- 
                 }
               }
             }
