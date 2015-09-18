@@ -51,9 +51,7 @@ class Printer(data:Data) {
       case None => apply(node.id)
       case Some(parentId) =>
         val bags = ider.fromId(node.id)._2
-        val lastBags = ider.fromId(parentId)._2
-        val lastBag = (lastBags &~ bags).head
-        apply(lastBag, bags)
+        apply(node.lastHand.from, bags)
     }
     header + body
   }

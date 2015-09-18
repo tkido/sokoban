@@ -6,6 +6,7 @@ case class Node(
     count:Int,
     value:Int,
     sub:Boolean,
+    lastHand:Hand,
     var status:Int){
   
 }
@@ -27,6 +28,9 @@ case class Hand(from:Int, to:Int){
     else
       del / delAbs
   }
+  
+  override def toString :String =
+    "(%d->%d)".format(from, to)
 }
 object Hand{
   var width = -1

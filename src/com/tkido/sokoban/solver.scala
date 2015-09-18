@@ -15,7 +15,7 @@ class Solver(data:Data) {
   val printer = Printer(data)
 
   val initId = ider.toId(data.man, data.bags)
-  val initNode = Node(initId, None, 0, evaluator(data.bags), false, Node.UNKNOWN)
+  val initNode = Node(initId, None, 0, evaluator(data.bags), false, null, Node.UNKNOWN)
   Log i printer(initNode)
   
   val goals = data.goals
@@ -97,20 +97,20 @@ class Solver(data:Data) {
     
     val (man, bags) = ider.fromId(node.id)
     if(bags.subsetOf(goals)) return true
-    def check(v:Int, checked:BitSet, reachedBags:BitSet, hands:MSet[(Int, Int)]) :(BitSet, BitSet, MSet[(Int, Int)]) = {
+    def check(v:Int, checked:BitSet, reachedBags:BitSet, hands:MSet[Hand]) :(BitSet, BitSet, MSet[Hand]) = {
       checked += v
       for (d <- neumann){
         if(bags(v+d)){
           reachedBags += v+d
           if(canBags(v+d*2) && !bags(v+d*2))
-            hands += Tuple2(v+d, v+d*2) 
+            hands += Hand(v+d, v+d*2) 
         }
         if(!checked(v+d) && canMans(v+d) && !bags(v+d))
           check(v+d, checked, reachedBags, hands)
       }
       (checked, reachedBags, hands)
     }
-    val (checked, reachedBags, hands) = check(man, BitSet(), BitSet(), MSet[(Int, Int)]())
+    val (checked, reachedBags, hands) = check(man, BitSet(), BitSet(), MSet[Hand]())
     
     if(hands.isEmpty){
       node.status = Node.DEAD
@@ -120,9 +120,8 @@ class Solver(data:Data) {
     if(isOpen && node.sub) return true
     
     if(!isOpen && node.parent.isDefined){
-      val lastBags = ider.fromId(node.parent.get)._2
-      val lastHand = Tuple2((lastBags &~ bags).head, (bags &~ lastBags).head)
-      def isClosed(v:Int, d:Int) :Boolean = {
+      def isClosed(hand:Hand) :Boolean = {
+        val (v, d) = (hand.to, hand.direction)
         val aims = List(v+d, v+r(d), v-r(d), v+d+r(d), v+d-r(d))
         for(aim <- aims){
           val newBags = BitSet()
@@ -134,8 +133,8 @@ class Solver(data:Data) {
           if(!checked(aim) && canMans(aim) && !bags(aim)){
             check(aim)
             if(newBags.size < bags.size){
-              val newId = ider.toId(lastHand._1, newBags)
-              val newNode = Node(newId, None, 0, evaluator(newBags), true, Node.UNKNOWN)
+              val newId = ider.toId(hand.from, newBags)
+              val newNode = Node(newId, None, 0, evaluator(newBags), true, null, Node.UNKNOWN)
               
               if(!nodes.contains(newId)){
                 if(!solve(newNode)) return true
@@ -154,19 +153,19 @@ class Solver(data:Data) {
         }
         false
       }
-      if(isClosed(lastHand._2, lastHand._2 - lastHand._1)){
+      if(isClosed(node.lastHand)){
         Log w s"Closed status checked!!\n${printer(man, bags)}"
         node.status = Node.DEAD
         return false
       }
     }
 
-    def pushBag(from:Int, to:Int) :Boolean = {
-      val newBags = bags - from + to
-      if (lockChecker(newBags, to, to - from)) return false
-      if (overChecker(to, newBags)) return false
-      val newId = ider.toId(from, newBags)
-      val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), node.sub, Node.UNKNOWN)
+    def pushBag(hand:Hand) :Boolean = {
+      val newBags = bags - hand.from + hand.to
+      if (lockChecker(newBags, hand.to, hand.delta)) return false
+      if (overChecker(hand.to, newBags)) return false
+      val newId = ider.toId(hand.from, newBags)
+      val newNode = Node(newId, Some(node.id), node.count+1, evaluator(newBags), node.sub, hand, Node.UNKNOWN)
       if(nodes.contains(newId)){
         //Log d s"${newId} is Known. status = ${nodes(newId).status}"
         if(!node.sub){
@@ -187,7 +186,7 @@ class Solver(data:Data) {
       false
     }
     Log d s"Hands: ${hands}"
-    for(hand <- hands) if(pushBag(hand._1, hand._2)) return true
+    for(hand <- hands) if(pushBag(hand)) return true
     false
   }
   
