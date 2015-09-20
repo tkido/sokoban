@@ -11,13 +11,13 @@ class Solver(data:Data) {
   val ider = Identifier(data)
   val lockChecker = LockChecker(data)
   val overChecker = OverChecker(data)
-  val evaluator = OrderedEvaluator(data) //Evaluator(data)
+  val evaluator = DirectionalEvaluator(data) //OrderedEvaluator(data) //Evaluator(data)
   val printer = Printer(data)
   
   val Hand = HandFactory(data.width)
 
   val initId = ider.toId(data.man, data.bags)
-  val initNode = Node(initId, None, 0, evaluator(data.bags), false, null, Node.UNKNOWN)
+  val initNode = Node(initId, None, 0, evaluator(data.man, data.bags), false, null, Node.UNKNOWN)
   Log i printer(initNode)
   
   val goals = data.goals
@@ -139,7 +139,7 @@ class Solver(data:Data) {
             check(aim)
             if(newBags.size < bags.size){
               val newId = ider.toId(hand.from, newBags)
-              val newNode = Node(newId, None, 0, evaluator(newBags), true, null, Node.UNKNOWN)
+              val newNode = Node(newId, None, 0, evaluator(hand.from, newBags), true, null, Node.UNKNOWN)
               
               if(!nodes.contains(newId)){
                 if(!solve(newNode)) return true
@@ -165,11 +165,12 @@ class Solver(data:Data) {
     }
 
     def pushBag(hand:Hand) :Boolean = {
+      Log d hand
       val newBags = bags - hand.from + hand.to
       if (lockChecker(newBags, hand.to, hand.direction)) return false
       if (overChecker(hand.to, newBags)) return false
       val newId = ider.toId(hand.from, newBags)
-      val newNode = Node(newId, Some(node.id), node.count + hand.size, evaluator(newBags), node.sub, hand, Node.UNKNOWN)
+      val newNode = Node(newId, Some(node.id), node.count + hand.size, evaluator(hand.from, newBags), node.sub, hand, Node.UNKNOWN)
       if(nodes.contains(newId)){
         //Log d s"${newId} is Known. status = ${nodes(newId).status}"
         if(!node.sub){

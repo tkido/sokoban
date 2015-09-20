@@ -3,7 +3,7 @@ import scala.collection.mutable.BitSet
 import scala.collection.mutable.{Map => MMap}
 import com.tkido.tools.Log
 
-class PullCounter(data:Data) {
+class DirectionalPullCounter(data:Data) {
   val goals = data.goals
   val neumann = data.neumann
   val canMans = data.canMans
@@ -41,10 +41,11 @@ class PullCounter(data:Data) {
     goals.toList.map(g => g -> getPullCounts(g)).toMap
   }
   
-  Log d countPull
+  val pullCounts = countPull()
+  Log d pullCounts
 }
 
-object PullCounter {
+object DirectionalPullCounter {
   def apply(data:Data) =
-    new PullCounter(data)
+    new DirectionalPullCounter(data)
 }

@@ -1,5 +1,6 @@
 package com.tkido.sokoban
 import scala.collection.mutable.BitSet
+import scala.collection.mutable.{Map => MMap}
 import com.tkido.tools.Log
 
 class Evaluator(data:Data) {
@@ -54,11 +55,66 @@ class OrderedEvaluator(data:Data) {
     }
     addValue(bags, data.orderedGoals)
   }
-  
 }
-
 
 object OrderedEvaluator {
   def apply(data:Data) =
     new OrderedEvaluator(data)
+}
+
+
+class DirectionalEvaluator(data:Data) {
+  val goals = data.goals
+  val neumann = data.neumann
+  val canMans = data.canMans
+  val canBags = data.canBags
+  val limit = data.limit
+  val width = data.width
+  val initMan = data.initMan  
+  
+  val gradientsMap = data.directionalPullCounts
+    .mapValues(_.mapValues(_.mapValues(c => LARGEINT/(c+1))))
+  Log i s"DirectionalEvaluator gradientsMap: ${gradientsMap}"
+  
+  def apply(man:Int, bags:BitSet) :Int = {
+    def addValue(man:Int, bags:BitSet, goals:List[Int]) :Int = {
+      if(bags.isEmpty) 0
+      else if(!bags(goals.head)){
+        def addValue2(bags:BitSet) :Int = {
+          Log d bags.size
+          if(bags.isEmpty) 0
+          else{
+            def check(v:Int, checked:BitSet, valueMap:MMap[Int, Int]) :MMap[Int, Int] = {
+              checked += v
+              for (d <- neumann){
+                if(bags(v+d)){
+                  Log d s"check v = ${v}, d = ${d}"
+                  valueMap(v+d) = 0
+                  if(canBags(v+d*2)){
+                    if(!valueMap.contains(v+d) || gradientsMap(goals.head)(v+d).contains(-d) || valueMap(v+d) < gradientsMap(goals.head)(v+d).getOrElse(-d, 0)){
+                      valueMap(v+d) = gradientsMap(goals.head)(v+d).getOrElse(-d, 0)
+                    }
+                  }
+                }
+                if(!checked(v+d) && canMans(v+d) && !bags(v+d))
+                  check(v+d, checked, valueMap)
+              }
+              valueMap
+            }
+            val valueMap = check(man, BitSet(), MMap())
+            //Log d valueMap
+            valueMap.values.sum + addValue2(bags &~ valueMap.keySet)
+          }
+        }
+        addValue2(bags)
+      }
+      else LARGEINT + addValue(man, bags - goals.head, goals.tail)
+    }
+    addValue(man, bags, data.orderedGoals)
+  }
+}
+
+object DirectionalEvaluator {
+  def apply(data:Data) =
+    new DirectionalEvaluator(data)
 }

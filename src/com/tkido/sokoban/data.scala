@@ -25,11 +25,18 @@ class Data(
   val pullCounts = countPull()
   setAvoid(pullCounts)
   
-  
   val initBags = bags
   val orderedGoals = getOrderedGoals(goals).reverse
   Log d s"orderedGoals: ${orderedGoals}"
   
+  val directionalPullCounts = DirectionalPullCounter(this).pullCounts
+
+  
+  
+  
+  /**
+   * Get ordered GOALs
+   */
   def getOrderedGoals(bags:BitSet) :List[Int] = {
     if(bags.isEmpty) return List[Int]()
     

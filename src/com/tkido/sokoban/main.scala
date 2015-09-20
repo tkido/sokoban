@@ -9,7 +9,7 @@ object main extends App {
   
   val data = Parser(args.head)
   
-  val pullCounter = PullCounter(data)
+  val pullCounter = DirectionalPullCounter(data)
   
   val solver = Solver(data)
   
