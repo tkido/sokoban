@@ -15,8 +15,8 @@ class PullCounter(data:Data) {
   /**
    * Pull a imaginary BAG from each GOAL with counting distance
    */
-  def countPull() :MMap[Int, MMap[Int, MMap[Int, Int]]] = {
-    def getPullCounts(goal:Int): MMap[Int, MMap[Int, Int]] = {
+  def countPull() :Map[Int, Map[Int, MMap[Int, Int]]] = {
+    def getPullCounts(goal:Int): Map[Int, MMap[Int, Int]] = {
       def checkHome(v:Int, bags:BitSet, checked:BitSet) :BitSet = {
         checked += v
         for (d <- neumann){
@@ -25,7 +25,7 @@ class PullCounter(data:Data) {
         }
         checked
       }
-      def check(v:Int, man:Int, distance:Int, direction:Int, maps:MMap[Int, MMap[Int, Int]]) :MMap[Int, MMap[Int, Int]] = {
+      def check(v:Int, man:Int, distance:Int, direction:Int, maps:Map[Int, MMap[Int, Int]]) :Map[Int, MMap[Int, Int]] = {
         val homes = checkHome(man, BitSet(v), BitSet())
         maps(v)(direction) = distance
         for (d <- neumann)
@@ -35,17 +35,10 @@ class PullCounter(data:Data) {
             check(v+d, v+d*2, distance+1, d, maps)
         maps
       }
-      val maps = MMap[Int, MMap[Int, Int]]()
-      canBags.toList.foreach(floor =>
-        maps(floor) = MMap[Int, Int]()
-      )
+      val maps = canBags.toList.map(_ -> MMap[Int, Int]()).toMap
       check(goal, initMan, 0, 0, maps)
     }
-    val maps = MMap[Int, MMap[Int, MMap[Int, Int]]]()
-    goals.toList.foreach(goal =>
-      maps(goal) = getPullCounts(goal)
-    )
-    maps
+    goals.toList.map(g => g -> getPullCounts(g)).toMap
   }
   
   Log d countPull
