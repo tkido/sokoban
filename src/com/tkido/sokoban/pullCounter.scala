@@ -30,17 +30,14 @@ class PullCounter(data:Data) {
         maps(v)(direction) = distance
         for (d <- neumann)
           if (homes(v+d) && canBags(v+d) && canMans(v+d*2) &&
-              distance+1 < maps(v+d)(d) &&
+              (!maps(v+d).contains(d) || distance+1 < maps(v+d)(d)) &&
               !data.isDeadEnd(v+d*2, v+d) )
             check(v+d, v+d*2, distance+1, d, maps)
         maps
       }
       val maps = MMap[Int, MMap[Int, Int]]()
       canBags.toList.foreach(floor =>
-        maps(floor) = MMap[Int, Int](-1 -> LARGEINT,
-                                     1 -> LARGEINT,
-                                     width -> LARGEINT,
-                                     -width -> LARGEINT)
+        maps(floor) = MMap[Int, Int]()
       )
       check(goal, initMan, 0, 0, maps)
     }
