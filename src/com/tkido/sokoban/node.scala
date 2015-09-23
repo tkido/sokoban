@@ -6,7 +6,7 @@ case class Node(
     count:Int,
     value:Int,
     sub:Boolean,
-    lastHand:Hand,
+    lastHand:Option[Hand],
     var status:Int){
   
 }

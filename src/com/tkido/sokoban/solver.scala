@@ -17,7 +17,7 @@ class Solver(data:Data) {
   val Hand = HandFactory(data.width)
 
   val initId = ider.toId(data.man, data.bags)
-  val initNode = Node(initId, None, 0, evaluator(data.man, data.bags), false, null, Node.UNKNOWN)
+  val initNode = Node(initId, None, 0, evaluator(data.man, data.bags, None), false, null, Node.UNKNOWN)
   Log i printer(initNode)
   
   val goals = data.goals
@@ -82,7 +82,7 @@ class Solver(data:Data) {
           nodes(id).status = Node.UNKNOWN
           //Log d s"There are UNKNOWN!!\n${printer(id)}"
         }
-      if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
+      //if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
     }else{
       for(id <- done) nodes(id).status = Node.DEAD
       //for(id <- done) Log d s"There are DEAD!!\n${printer(id)}"
@@ -139,7 +139,7 @@ class Solver(data:Data) {
             check(aim)
             if(newBags.size < bags.size){
               val newId = ider.toId(hand.from, newBags)
-              val newNode = Node(newId, None, 0, evaluator(hand.from, newBags), true, null, Node.UNKNOWN)
+              val newNode = Node(newId, None, 0, evaluator(hand.from, newBags, None), true, None, Node.UNKNOWN)
               
               if(!nodes.contains(newId)){
                 if(!solve(newNode)) return true
@@ -157,7 +157,7 @@ class Solver(data:Data) {
         }
         false
       }
-      if(isClosed(node.lastHand)){
+      if(isClosed(node.lastHand.get)){
         Log w s"Closed status checked!!\n${printer(man, bags)}"
         node.status = Node.DEAD
         return false
@@ -165,12 +165,12 @@ class Solver(data:Data) {
     }
 
     def pushBag(hand:Hand) :Boolean = {
-      Log d hand
+      //Log d hand
       val newBags = bags - hand.from + hand.to
       if (lockChecker(newBags, hand.to, hand.direction)) return false
       if (overChecker(hand.to, newBags)) return false
       val newId = ider.toId(hand.from, newBags)
-      val newNode = Node(newId, Some(node.id), node.count + hand.size, evaluator(hand.from, newBags), node.sub, hand, Node.UNKNOWN)
+      val newNode = Node(newId, Some(node.id), node.count + hand.size, evaluator(hand.from, newBags, Some(hand)), node.sub, Some(hand), Node.UNKNOWN)
       if(nodes.contains(newId)){
         //Log d s"${newId} is Known. status = ${nodes(newId).status}"
         if(!node.sub){

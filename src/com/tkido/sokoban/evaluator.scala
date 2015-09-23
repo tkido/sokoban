@@ -76,19 +76,19 @@ class DirectionalEvaluator(data:Data) {
     .mapValues(_.mapValues(_.mapValues(c => LARGEINT/(c+1))))
   Log i s"DirectionalEvaluator gradientsMap: ${gradientsMap}"
   
-  def apply(man:Int, bags:BitSet) :Int = {
+  def apply(man:Int, bags:BitSet, lastHand:Option[Hand]) :Int = {
     def addValue(man:Int, bags:BitSet, goals:List[Int]) :Int = {
       if(bags.isEmpty) 0
       else if(!bags(goals.head)){
         def addValue2(bags:BitSet) :Int = {
-          Log d bags.size
+          //Log d bags.size
           if(bags.isEmpty) 0
           else{
             def check(v:Int, checked:BitSet, valueMap:MMap[Int, Int]) :MMap[Int, Int] = {
               checked += v
               for (d <- neumann){
                 if(bags(v+d)){
-                  Log d s"check v = ${v}, d = ${d}"
+                  //Log d s"check v = ${v}, d = ${d}"
                   valueMap(v+d) = 0
                   if(canBags(v+d*2)){
                     if(!valueMap.contains(v+d) || gradientsMap(goals.head)(v+d).contains(-d) || valueMap(v+d) < gradientsMap(goals.head)(v+d).getOrElse(-d, 0)){
@@ -111,7 +111,11 @@ class DirectionalEvaluator(data:Data) {
       }
       else LARGEINT + addValue(man, bags - goals.head, goals.tail)
     }
-    addValue(man, bags, data.orderedGoals)
+    val handValue = lastHand match{
+      case None => 0
+      case Some(hand) => hand.size
+    }
+    addValue(man, bags, data.orderedGoals) + handValue
   }
 }
 
