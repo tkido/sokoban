@@ -82,7 +82,7 @@ class Solver(data:Data) {
           nodes(id).status = Node.UNKNOWN
           //Log d s"There are UNKNOWN!!\n${printer(id)}"
         }
-      //if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
+      if(depth == 1) list.reverse.foreach(node => Log f s"${printer(node)}")
     }else{
       for(id <- done) nodes(id).status = Node.DEAD
       //for(id <- done) Log d s"There are DEAD!!\n${printer(id)}"

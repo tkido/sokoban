@@ -103,7 +103,8 @@ class DirectionalEvaluator(data:Data) {
             }
             val valueMap = check(man, BitSet(), MMap())
             //Log d valueMap
-            valueMap.values.sum + addValue2(bags &~ valueMap.keySet)
+            //valueMap.values.sum + addValue2(bags &~ valueMap.keySet)
+            valueMap.values.max
           }
         }
         addValue2(bags)
