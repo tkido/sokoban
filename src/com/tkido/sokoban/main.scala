@@ -8,9 +8,6 @@ object main extends App {
   Log.level = Config.logLevel
   
   val data = Parser(args.head)
-  
-  val pullCounter = DirectionalPullCounter(data)
-  
   val solver = Solver(data)
   
   Log.close()
