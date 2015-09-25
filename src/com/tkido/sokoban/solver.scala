@@ -5,8 +5,10 @@ import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
 import com.tkido.tools.Log
 
-class Solver(data:Data) {
+class Solver(path:String) {
   class MustNotHappenException extends RuntimeException
+  
+  val data = Parser(path)
   
   val ider = Identifier(data)
   val lockChecker = LockChecker(data)
@@ -197,6 +199,6 @@ class Solver(data:Data) {
 }
 
 object Solver {
-  def apply(problem:Data) =
-    new Solver(problem)
+  def apply(path:String) =
+    new Solver(path)
 }

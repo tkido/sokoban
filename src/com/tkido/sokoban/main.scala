@@ -7,8 +7,9 @@ object main extends App {
 
   Log.level = Config.logLevel
   
-  val data = Parser(args.head)
-  val solver = Solver(data)
+  val solver = Solver(args.head)
+  
+  Log d ((System.currentTimeMillis - executionStart) + "msec")
   
   Log.close()
 }
