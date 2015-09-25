@@ -5,8 +5,10 @@ import scala.collection.mutable.{Map => MMap}
 import scala.collection.mutable.{Set => MSet}
 import com.tkido.tools.Log
 
-class Solver(data:Data) {
+class Solver(path:String) {
   class MustNotHappenException extends RuntimeException
+  
+  val data = Parser(path)
   
   val ider = Identifier(data)
   val lockChecker = LockChecker(data)
@@ -37,12 +39,13 @@ class Solver(data:Data) {
   var done = Stack[BigInt]()
   var node = initNode
   
-  Log f printer(initNode)
+  Log w printer(initNode)
   
-  if(solve(initNode))
-    Log f s"Clear!!"
-  else
-    Log f "Impossible!!"
+  val isCleared = solve(initNode)
+  
+  override def toString = {
+    s"${path}\t${data.width}\t${data.height}\t${data.bags.size}\t${isCleared}\t${node.count}\t${total}\t${nodes.size}"
+  }
   
   private def solve(initNode:Node) :Boolean = {
     node = initNode
@@ -60,6 +63,7 @@ class Solver(data:Data) {
         total += 1
         count += 1
         Log i s"${depth}(${count}/${total})th evaluation(todo.size = ${todo.size})"
+        if(total > 5000) return false
         var id = todo.pop()
         done.push(id)
         node = nodes(id)
@@ -198,6 +202,6 @@ class Solver(data:Data) {
 }
 
 object Solver {
-  def apply(problem:Data) =
-    new Solver(problem)
+  def apply(path:String) =
+    new Solver(path)
 }
