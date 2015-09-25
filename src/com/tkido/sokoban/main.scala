@@ -22,8 +22,8 @@ object Main extends App {
   
   files.foreach {file =>
     val now = System.currentTimeMillis
-    Solver(file.toString)
-    Log f s"${System.currentTimeMillis - now}msec"
+    val solver = Solver(file.toString)
+    Log f s"${solver}\t${System.currentTimeMillis - now}"
   }
   
   Log.close()

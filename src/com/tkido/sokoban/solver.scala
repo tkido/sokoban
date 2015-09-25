@@ -39,12 +39,13 @@ class Solver(path:String) {
   var done = Stack[BigInt]()
   var node = initNode
   
-  Log f printer(initNode)
+  Log w printer(initNode)
   
-  if(solve(initNode))
-    Log f s"Clear!!"
-  else
-    Log f "Impossible!!"
+  val isCleared = solve(initNode)
+  
+  override def toString = {
+    s"${path}\t${data.width}\t${data.height}\t${data.bags.size}\t${isCleared}\t${node.count}\t${total}\t${nodes.size}"
+  }
   
   private def solve(initNode:Node) :Boolean = {
     node = initNode
@@ -62,6 +63,7 @@ class Solver(path:String) {
         total += 1
         count += 1
         Log i s"${depth}(${count}/${total})th evaluation(todo.size = ${todo.size})"
+        if(total > 5000) return false
         var id = todo.pop()
         done.push(id)
         node = nodes(id)
