@@ -89,9 +89,9 @@ class DirectionalEvaluator(data:Data) {
               for (d <- neumann){
                 if(bags(v+d)){
                   //Log d s"check v = ${v}, d = ${d}"
-                  valueMap(v+d) = 0
+                  if(!valueMap.contains(v+d)) valueMap(v+d) = 0
                   if(canBags(v+d*2)){
-                    if(!valueMap.contains(v+d) || gradientsMap(goals.head)(v+d).contains(-d) || valueMap(v+d) < gradientsMap(goals.head)(v+d).getOrElse(-d, 0)){
+                    if(gradientsMap(goals.head)(v+d).contains(-d) || valueMap(v+d) < gradientsMap(goals.head)(v+d).getOrElse(-d, 0)){
                       valueMap(v+d) = gradientsMap(goals.head)(v+d).getOrElse(-d, 0)
                     }
                   }
